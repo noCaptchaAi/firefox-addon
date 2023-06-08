@@ -1,3 +1,34 @@
+browser.storage.onChanged.addListener((changes, area) => {
+    if (area === "sync" && changes.yourSyncStorageValue) {
+        // Refresh hCaptcha iframes
+        refreshhCaptchaIframes();
+    }
+});
+
+function refreshhCaptchaIframes() {
+    // Get all active tabs
+    browser.tabs.query({}).then((tabs) => {
+        // Iterate through each tab
+        tabs.forEach((tab) => {
+            // Check if the tab is already loaded and has a content script injected
+            if (tab.status === "complete" && tab.url.startsWith("http")) {
+                // Send a message to the content script to refresh hCaptcha iframes
+                browser.tabs
+                    .sendMessage(tab.id, { command: "refresh_hcaptcha" })
+                    .then(() => {
+                        // Optional: Handle response from content script
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "Error refreshing hCaptcha iframes:",
+                            error
+                        );
+                    });
+            }
+        });
+    });
+}
+
 // refresh iframes
 function refreshIframes() {
     browser.tabs.executeScript({
@@ -177,15 +208,6 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
     });
 
     const data = await response.json();
-    console.log(data, "data");
-
-    const balanceDataElement = element.querySelector(".loader");
-    if (balanceDataElement) {
-        element.removeChild(balanceDataElement);
-    }
-
-    const newBalanceDataElement = document.createElement("div");
-    newBalanceDataElement.id = "balance-data";
 
     const c = document.getElementById("error-api");
     if (data.error) {
@@ -194,9 +216,31 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
         c.style.fontSize = "20px";
         c.style.textAlign = "center";
         c.innerHTML = data.message;
+
+        return;
     } else if (c.style.display === "block") {
         c.style.display = "none";
     }
+
+    // console.log(data, "data");
+    if (data && url === endpointurl && settings.PLANTYPE == null) {
+        if (data.plan == "free") {
+            settings.PLANTYPE = "free";
+            chrome.storage.sync.set({ PLANTYPE: "free" });
+            document.getElementById("PLANTYPE").value = "free";
+        } else {
+            chrome.storage.sync.set({ PLANTYPE: "pro" });
+            document.getElementById("PLANTYPE").value = "pro";
+        }
+    }
+
+    const balanceDataElement = element.querySelector(".loader");
+    if (balanceDataElement) {
+        element.removeChild(balanceDataElement);
+    }
+
+    const newBalanceDataElement = document.createElement("div");
+    newBalanceDataElement.id = "balance-data";
 
     fields.forEach((key) => {
         const value =
@@ -231,17 +275,12 @@ const balanceFields = [
     "wallet_usages",
 ];
 
+const endpointurl = "https://manage.nocaptchaai.com/api/user/get_endpoint";
+const balanceurl = "https://manage.nocaptchaai.com/balance";
+
 const refreshData = async () => {
-    fetchAndDisplayData(
-        "https://manage.nocaptchaai.com/balance",
-        "balance-section",
-        balanceFields
-    );
-    fetchAndDisplayData(
-        "https://manage.nocaptchaai.com/api/user/get_endpoint",
-        "endpoint-section",
-        ["endpoint", "free"]
-    );
+    fetchAndDisplayData(balanceurl, "balance-section", balanceFields);
+    fetchAndDisplayData(endpointurl, "endpoint-section", ["endpoint", "free"]);
 };
 
 document.addEventListener("DOMContentLoaded", () => {

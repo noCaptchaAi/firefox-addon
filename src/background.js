@@ -1,9 +1,9 @@
 chrome.runtime.onInstalled.addListener((details) => {
     const defaultConfigs = {
         // Global
-        APIKEY: null,
-        PLANTYPE: null,
-        customEndpoint: "bull",
+        APIKEY: "sope-abff7276-6a36-052c-89ee-56c5d40f99a3",
+        PLANTYPE: "pro",
+        customEndpoint: null,
         hCaptchaEnabled: true,
         reCaptchaEnabled: true,
         dataDomeEnabled: true,
@@ -15,9 +15,9 @@ chrome.runtime.onInstalled.addListener((details) => {
         // hCaptcha
         hCaptchaAutoOpen: true,
         hCaptchaAutoSolve: true,
-        hCaptchaGridSolveTime: 6, // seconds
-        hCaptchaMultiSolveTime: 3, // seconds
-        hCaptchaBoundingBoxSolveTime: 3, // seconds
+        hCaptchaGridSolveTime: 7, // seconds
+        hCaptchaMultiSolveTime: 5, // seconds
+        hCaptchaBoundingBoxSolveTime: 5, // seconds
         hCaptchaAlwaysSolve: true,
         englishLanguage: true,
         // reCaptcha
@@ -26,7 +26,7 @@ chrome.runtime.onInstalled.addListener((details) => {
         reCaptchaAlwaysSolve: true,
         reCaptchaClickDelay: 400, // milliseconds
         reCaptchaSubmitDelay: 1, // seconds
-        reCaptchaSolveType: "audio", // for default audio use "audio"
+        reCaptchaSolveType: "image", // for default audio use "audio"
     };
 
     // Set the default configs
@@ -181,51 +181,51 @@ chrome.runtime.onInstalled.addListener((details) => {
         }
     });
 
-    // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    //     if (request.action === "sendTask") {
-    //         fetch(request.url, {
-    //             method: "POST",
-    //             headers: request.header,
-    //             body: request.body,
-    //         })
-    //             .then((response) => response.json())
-    //             .then((data) => sendResponse({ success: true, data }))
-    //             .catch((error) =>
-    //                 sendResponse({ success: false, error: error.message })
-    //             );
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.action === "sendTask") {
+            fetch(request.url, {
+                method: "POST",
+                headers: request.header,
+                body: request.body,
+            })
+                .then((response) => response.json())
+                .then((data) => sendResponse({ success: true, data }))
+                .catch((error) =>
+                    sendResponse({ success: false, error: error.message })
+                );
 
-    //         return true; // Keep the message channel open for async response
-    //     }
+            return true; // Keep the message channel open for async response
+        }
 
-    //     if (request.action === "getBase64FromUrl") {
-    //         convertUrlToBase64(request.url).then(sendResponse);
-    //         return true; // will respond asynchronously
-    //     }
+        if (request.action === "getBase64FromUrl") {
+            convertUrlToBase64(request.url).then(sendResponse);
+            return true; // will respond asynchronously
+        }
 
-    //     if (request.action === "captureScreenshot") {
-    //         chrome.tabs.captureVisibleTab(null, {}, sendResponse);
-    //         return true;
-    //     }
-    // });
+        if (request.action === "captureScreenshot") {
+            chrome.tabs.captureVisibleTab(null, {}, sendResponse);
+            return true;
+        }
+    });
 
-    // async function convertUrlToBase64(url) {
-    //     const blob = await (await fetch(url)).blob();
-    //     return new Promise(function (resolve, reject) {
-    //         const reader = new FileReader();
-    //         reader.onloadend = () => {
-    //             const base64data = reader.result.replace(
-    //                 /^data:image\/(png|jpeg);base64,/,
-    //                 ""
-    //             );
-    //             resolve(base64data);
-    //         };
-    //         reader.onerror = () => {
-    //             console.log("❌ Failed to convert url to base64");
-    //             reject(new Error("Failed to convert url to base64"));
-    //         };
-    //         reader.readAsDataURL(blob);
-    //     });
-    // }
+    async function convertUrlToBase64(url) {
+        const blob = await (await fetch(url)).blob();
+        return new Promise(function (resolve, reject) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64data = reader.result.replace(
+                    /^data:image\/(png|jpeg);base64,/,
+                    ""
+                );
+                resolve(base64data);
+            };
+            reader.onerror = () => {
+                console.log("❌ Failed to convert url to base64");
+                reject(new Error("Failed to convert url to base64"));
+            };
+            reader.readAsDataURL(blob);
+        });
+    }
 
     browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.action === "getToken") {

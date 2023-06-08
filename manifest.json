@@ -16,7 +16,8 @@
         "scripting",
         "contextMenus",
         "activeTab",
-        "<all_urls>"
+        "<all_urls>",
+        "*://*.hcaptcha.com/*"
     ],
     "browser_action": {
         "default_icon": {
@@ -36,6 +37,12 @@
         {
             "matches": ["<all_urls>"],
             "js": ["src/hCaptcha.js"],
+            "all_frames": true,
+            "match_about_blank": false
+        },
+        {
+            "matches": ["<all_urls>"],
+            "js": ["src/iframes.js"],
             "all_frames": true,
             "match_about_blank": false
         },

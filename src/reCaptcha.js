@@ -324,6 +324,7 @@
             settings.reCaptchaSolveType !== "audio"
         ) {
             await Time.sleep(1000);
+            // console.log("reCaptcha solver started");
 
             if (RC.isWidgetFrame() && settings.reCaptchaAutoOpen) {
                 RC.openImageFrame();

@@ -47,7 +47,7 @@
 
         let settings = await chrome.storage.sync.get(null);
 
-        if (settings.apikey.length < 0) {
+        if (settings.APIKEY.length < 0) {
             jsNotif("empty apikey");
         } else {
             // console.log(settings.apikey, settings.endpoint, settings.plantype);
@@ -56,7 +56,7 @@
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
-                        apikey: settings.apikey,
+                        apikey: settings.APIKEY,
                     },
                 });
                 res = await res.json();
@@ -65,7 +65,7 @@
                     jsNotif(
                         res.error + "\n noCaptchaAi Extension Config failed ✘"
                     );
-                    chrome.storage.sync.set({ apikey: "" });
+                    chrome.storage.sync.set({ APIKEY: "" });
                 } else if (res.plan === "free") {
                     jsNotif("noCaptchaAi Extension \n Config Successful ✔️");
 
@@ -82,8 +82,8 @@
                 } else if (res.plan === "daily" || "unlimited" || "wallet") {
                     if (res.custom) {
                         chrome.storage.sync.set({
-                            plantype: "custom",
-                            endpoint: res.custom.includes(params.endpoint)
+                            PLANTYPE: "custom",
+                            customEndpoint: res.custom.includes(params.endpoint)
                                 ? params.endpoint
                                 : res.custom[0],
                         });
@@ -94,7 +94,7 @@
                         return;
                     }
                     chrome.storage.sync.set({
-                        plantype: "PRO",
+                        PLANTYPE: "pro",
                     });
 
                     jsNotif(

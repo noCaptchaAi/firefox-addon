@@ -318,6 +318,7 @@
 
     async function main() {
         while (
+            settings.PLANTYPE &&
             settings.APIKEY &&
             settings.extensionEnabled &&
             settings.reCaptchaEnabled &&

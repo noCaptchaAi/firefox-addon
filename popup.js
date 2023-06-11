@@ -346,10 +346,10 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
         errorApiElement.style.textAlign = "center";
         errorApiElement.innerHTML = data.message;
 
-        const balanceDataElement = element.querySelector(".loader");
-        if (balanceDataElement) {
-            element.removeChild(balanceDataElement);
-        }
+        // const balanceDataElement = element.querySelector(".loader");
+        // if (balanceDataElement) {
+        //     element.removeChild(balanceDataElement);
+        // }
 
         return;
     } else {
@@ -362,16 +362,22 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
             settings.PLANTYPE = "free";
             chrome.storage.sync.set({ PLANTYPE: "free" });
             document.getElementById("PLANTYPE").value = "free";
+
+            console.log("free", document.getElementById("PLANTYPE").value);
+
+            document.querySelector(
+                "#PLANTYPE option[value='free']"
+            ).disabled = true;
         } else {
             chrome.storage.sync.set({ PLANTYPE: "pro" });
             document.getElementById("PLANTYPE").value = "pro";
         }
     }
 
-    const balanceDataElement = element.querySelector(".loader");
-    if (balanceDataElement) {
-        element.removeChild(balanceDataElement);
-    }
+    // const balanceDataElement = element.querySelector(".loader");
+    // if (balanceDataElement) {
+    //     element.removeChild(balanceDataElement);
+    // }
 
     const newBalanceDataElement = document.createElement("div");
     newBalanceDataElement.id = "balance-data";
@@ -441,6 +447,7 @@ const refreshData = async () => {
     refreshButton.innerHTML = '<img src="/icons/s.svg" alt="██▒▒▒▒▒▒▒▒ 50%" />';
 
     await fetchAndDisplayData(balanceurl, "balance-section", balanceFields);
+    fetchAndDisplayData(endpointurl, "endpoint-section", ["endpoint", "free"]);
 
     refreshButton.innerHTML = "Refresh";
     refreshButton.style.fontSize = "16px";

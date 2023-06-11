@@ -62,6 +62,7 @@ const version = "1.0";
             return (
                 !navigator.onLine ||
                 stop ||
+                settings.PLANTYPE == null ||
                 settings.APIKEY === undefined ||
                 settings.APIKEY === ""
             );
@@ -103,7 +104,7 @@ const version = "1.0";
         while (!shouldRun()) {
             await sleep(1000);
 
-            console.log("hCaptcha.js running");
+            // console.log("hCaptcha.js running");
 
             if (settings.hCaptchaAutoOpen && isWidget()) {
                 if (isSolved()) {

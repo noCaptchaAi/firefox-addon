@@ -33,8 +33,7 @@
                                 <p>Custom Endpoint:</p>
                                 <input type="text" id="customEndpoint" name="customEndpoint" />
                             </div>
-                            <small>Enter if your Custom Endpoint (if
-                                assinged)</small>
+                            <small>Enter your Custom Endpoint(assinged by admin)</small>
                         </div>
                     </label>
 
@@ -93,12 +92,13 @@
         <div class="topbar">
             <!-- <img src="./icons/logonew.png" width="25px" alt="Logo" /> -->
             <a href="http://noCaptchaAi.com">
-                <h1>noCaptcha Ai </h1>
+                <h1>noCaptchaAi</h1>
             </a>
-            <select title="Select Plan Type" name="PLANTYPE" id="PLANTYPE">
+            <label for="PLANTYPE">Plan:</label>
+            <select onselect="this.style.color = 'black'" title="Select Plan Type" name="PLANTYPE" id="PLANTYPE">
                 <option value="pro">PRO</option>
                 <option value="free">FREE</option>
-                <option value="custom">Custom</option>
+                <option title="Custom plantype works with custom Endpoint" value="custom">Custom</option>
             </select>
         </div>
 
@@ -124,7 +124,7 @@
                     ✅Add
                 </div>
                 <div title="delete API Key" id="delete-button" class="delete-button" style="display: none">
-                    ❌Del
+                    ❌Delete
                 </div>
             </div>
         </div>
@@ -133,6 +133,9 @@
 
         <div id="balance-area" class="container">
             <div class="data-section balance-section" id="balance-section">
+                <!-- <div id="balance-data" class="loader"></div> -->
+            </div>
+            <div class="data-section endpoint-section" id="endpoint-section">
                 <!-- <div id="balance-data" class="loader"></div> -->
             </div>
         </div>

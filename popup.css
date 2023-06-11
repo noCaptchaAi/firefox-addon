@@ -434,6 +434,7 @@ h2 {
 
 .apikey-wrapper {
     width: 99%;
+    max-width: 400px;
     margin: 0 auto;
 }
 

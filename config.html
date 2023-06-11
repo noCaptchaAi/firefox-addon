@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Configuration Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: .1em;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 1em;
+        }
+
+        fieldset {
+            margin: 0.2em;
+            border: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 0.3em;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+        }
+
+        #configUrl {
+            width: 100vw;
+            max-width: 1000px;
+        }
+
+        #copyButton {
+            margin-top: 1em;
+            padding: 0.5em;
+            cursor: pointer;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+
+        #copyButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>noCaptcha Extension Config</h1>
+    <div>
+        <label>Configuration URL: </label>
+        <input type="text" id="configUrl" readonly>
+        <button id="copyButton">Copy URL</button>
+    </div>
+    <form id="configForm"></form>
+
+
+    <script>
+        const defaultConfigs = {
+            // Global
+            APIKEY: null,
+            PLANTYPE: null,
+            customEndpoint: null,
+            hCaptchaEnabled: true,
+            reCaptchaEnabled: true,
+            dataDomeEnabled: true,
+            ocrEnabled: true,
+            extensionEnabled: true,
+            logsEnabled: false,
+            fastAnimationMode: true,
+            debugMode: false,
+            // hCaptcha
+            hCaptchaAutoOpen: true,
+            hCaptchaAutoSolve: true,
+            hCaptchaGridSolveTime: 7, // seconds
+            hCaptchaMultiSolveTime: 5, // seconds
+            hCaptchaBoundingBoxSolveTime: 5, // seconds
+            hCaptchaAlwaysSolve: true,
+            englishLanguage: true,
+            // reCaptcha
+            reCaptchaAutoOpen: true,
+            reCaptchaAutoSolve: true,
+            reCaptchaAlwaysSolve: true,
+            reCaptchaClickDelay: 400, // milliseconds
+            reCaptchaSubmitDelay: 1, // seconds
+            reCaptchaSolveType: "image", // for default audio use "audio"
+        };
+
+        const form = document.getElementById('configForm');
+        const configUrl = document.getElementById('configUrl');
+        const copyButton = document.getElementById('copyButton');
+
+        Object.entries(defaultConfigs).forEach(([key, value]) => {
+            const fieldSet = document.createElement('fieldset');
+            const label = document.createElement('label');
+            label.innerText = key;
+
+            let input;
+            if (typeof value === 'boolean') {
+                input = document.createElement('input');
+                input.type = 'checkbox';
+                input.checked = value;
+            } else if (typeof value === 'number') {
+                input = document.createElement('input');
+                input.type = 'number';
+                input.value = value;
+            } else {
+                input = document.createElement('input');
+                input.type = 'text';
+                input.value = value;
+            }
+            input.id = key;
+            input.addEventListener('change', updateUrl);
+
+            fieldSet.appendChild(label);
+            fieldSet.appendChild(input);
+            form.appendChild(fieldSet);
+        });
+
+        function updateUrl() {
+            const params = new URLSearchParams();
+            Object.entries(defaultConfigs).forEach(([key]) => {
+                const input = document.getElementById(key);
+                params.set(key, input.type === 'checkbox' ? input.checked : input.value);
+            });
+            const url = `${location.origin}${location.pathname}?${params.toString()}`;
+            configUrl.value = url;
+            history.pushState({}, '', url);
+        }
+
+        copyButton.addEventListener('click', function () {
+            configUrl.select();
+            document.execCommand('copy');
+        });
+
+        updateUrl();
+    </script>
+</body>
+
+</html>

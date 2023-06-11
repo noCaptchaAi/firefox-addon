@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>noCaptchaAi.com Extension Config</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 0.01em;
+        }
+
+        #top {
+            text-align: center;
+            margin-bottom: 0.02em;
+        }
+
+        #header {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            max-width: 96vw !important;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0.1em;
+            justify-content: center;
+        }
+
+        #configUrl {
+            margin-top: 0.22em;
+            width: 96vw;
+            overflow: scroll;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            padding: 1px;
+            line-break: auto;
+            word-wrap: break-word;
+        }
+
+        #configForm {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 95vw;
+        }
+
+        .configGroup {
+            flex-basis: 25%;
+            border: 1px solid #ddd;
+            border-radius: 1px;
+            padding: 1px;
+            margin: 1px;
+        }
+
+        .configGroup h3 {
+            text-align: center;
+            font-size: x-large;
+            margin: 0.15em;
+        }
+
+        fieldset {
+            /* margin: 0.02em; */
+            border: 1px solid #47444411;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 2px;
+
+        }
+
+        fieldset>input {
+            text-align: center;
+        }
+
+        label {
+            margin-bottom: 0.1em;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            font-size: larger;
+            border-radius: 21px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="checkbox"] {
+            /* Hide the default checkbox */
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 40px;
+            height: 20px;
+            background-color: #d9d9d9;
+            border-radius: 10px;
+            outline: none;
+            transition: background-color 0.2s ease-in-out;
+            position: relative;
+        }
+
+        /* Style the checkbox when it is checked */
+        input[type="checkbox"]:checked {
+            background-color: rgb(97, 77, 212);
+        }
+
+        /* Create the thumb */
+        input[type="checkbox"]::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: left 0.2s ease-in-out;
+        }
+
+        /* Move the thumb to the right when the checkbox is checked */
+        input[type="checkbox"]:checked::before {
+            left: 22px;
+        }
+
+
+
+        #copyButton {
+            font-size: large;
+            margin-top: 0.2em;
+            padding: 0.5em;
+            cursor: pointer;
+            border: none;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #copyButton:hover {
+            background-color: #45a049;
+        }
+
+        /* DL JSOn */
+        #downloadButton {
+            font-size: large;
+            margin-top: 0.2em;
+            padding: 0.5em;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #downloadButton:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <div id="top">
+            <h1 href="https://nocaptchaai.com">
+                NoCaptchaAi.com Extension Setup
+            </h1>
+
+            <div>
+                <a href="https://nocaptchaai.com/firefox">Firefox Addon</a>
+                <a href="https://nocaptchaai.com/chrome">Chrome Extension (Edge, Vivaldi, Brave, Opera and such)</a>
+            </div>
+        </div>
+        <input type="text" id="configUrl" readonly />
+        <div>
+            <button id="copyButton">Copy URL</button>
+            <button id="downloadButton">Download JSON</button>
+        </div>
+
+
+        <p>
+            Available PLANTYPE: "free", "pro", "custom" [ Use customEndpoint URL (if eligible) with PLANTYPE:
+            "custom"]
+
+            <br>
+            For reCaptcha v2 Audio use "audio" on reCaptchaSolveType and reCaptchaClickDelay is in milliseconds
+            (500ms = 1/2 second)
+        </p>
+
+
+    </div>
+    <div id="configForm">
+        <div class="configGroup" id="globalConfigs">
+            <h3>Global</h3>
+        </div>
+        <div class="configGroup" id="hCaptchaConfigs">
+            <h3>hCaptcha</h3>
+        </div>
+        <div class="configGroup" id="reCaptchaConfigs">
+            <h3>reCaptcha</h3>
+        </div>
+    </div>
+
+    <script>
+        const defaultConfigs = {
+            // Global
+            APIKEY: null,
+            PLANTYPE: null,
+            customEndpoint: null,
+            hCaptchaEnabled: true,
+            reCaptchaEnabled: true,
+            dataDomeEnabled: true,
+            ocrEnabled: true,
+            extensionEnabled: true,
+            logsEnabled: false,
+            fastAnimationMode: true,
+            debugMode: false,
+            // hCaptcha
+            hCaptchaAutoOpen: true,
+            hCaptchaAutoSolve: true,
+            hCaptchaGridSolveTime: 7, // seconds
+            hCaptchaMultiSolveTime: 5, // seconds
+            hCaptchaBoundingBoxSolveTime: 5, // seconds
+            hCaptchaAlwaysSolve: true,
+            englishLanguage: true,
+            // reCaptcha
+            reCaptchaAutoOpen: true,
+            reCaptchaAutoSolve: true,
+            reCaptchaAlwaysSolve: true,
+            reCaptchaClickDelay: 400, // milliseconds
+            reCaptchaSubmitDelay: 1, // seconds
+            reCaptchaSolveType: "image", // for default audio use "audio"
+        };
+
+        const globalKeys = [
+            "APIKEY",
+            "PLANTYPE",
+            "customEndpoint",
+            "hCaptchaEnabled",
+            "reCaptchaEnabled",
+            "dataDomeEnabled",
+            "ocrEnabled",
+            "extensionEnabled",
+            "logsEnabled",
+            "fastAnimationMode",
+            "debugMode",
+        ];
+        const hCaptchaKeys = [
+            "hCaptchaAutoOpen",
+            "hCaptchaAutoSolve",
+            "hCaptchaGridSolveTime",
+            "hCaptchaMultiSolveTime",
+            "hCaptchaBoundingBoxSolveTime",
+            "hCaptchaAlwaysSolve",
+            "englishLanguage",
+        ];
+        const reCaptchaKeys = [
+            "reCaptchaAutoOpen",
+            "reCaptchaAutoSolve",
+            "reCaptchaAlwaysSolve",
+            "reCaptchaClickDelay",
+            "reCaptchaSubmitDelay",
+            "reCaptchaSolveType",
+        ];
+
+        const copyButton = document.getElementById("copyButton");
+
+        Object.entries(defaultConfigs).forEach(([key, value]) => {
+            const fieldSet = document.createElement("fieldset");
+            const label = document.createElement("label");
+            label.innerText = key;
+
+            let input;
+            if (typeof value === "boolean") {
+                input = document.createElement("input");
+                input.type = "checkbox";
+                input.checked = value;
+            } else if (typeof value === "number") {
+                input = document.createElement("input");
+                input.type = "number";
+                input.value = value;
+            } else {
+                input = document.createElement("input");
+                input.type = "text";
+                input.value = value;
+            }
+            input.id = key;
+            input.addEventListener("change", updateUrl);
+
+            fieldSet.appendChild(label);
+            fieldSet.appendChild(input);
+
+            if (globalKeys.includes(key)) {
+                document
+                    .getElementById("globalConfigs")
+                    .appendChild(fieldSet);
+            } else if (hCaptchaKeys.includes(key)) {
+                document
+                    .getElementById("hCaptchaConfigs")
+                    .appendChild(fieldSet);
+            } else if (reCaptchaKeys.includes(key)) {
+                document
+                    .getElementById("reCaptchaConfigs")
+                    .appendChild(fieldSet);
+            }
+        });
+
+        function updateUrl() {
+            const params = new URLSearchParams();
+            Object.entries(defaultConfigs).forEach(([key]) => {
+                const input = document.getElementById(key);
+                params.set(
+                    key,
+                    input.type === "checkbox" ? input.checked : input.value
+                );
+            });
+            const url = `${location.origin}${location.pathname
+                }?${params.toString()}`;
+            configUrl.value = url;
+            history.pushState({}, "", url);
+        }
+
+        copyButton.addEventListener("click", function () {
+            configUrl.select();
+            document.execCommand("copy");
+            jsNotif("✅ Copied to clipboard", 5000);
+        });
+
+        updateUrl();
+
+        // JsNotif
+        const injectCSSAndAnimations = () => {
+            const styleElement = document.createElement("style");
+            styleElement.innerHTML =
+                ".notif{position:fixed;top:40%;left:40%;background-color:rgba(0, 167, 114, 0.9);border-radius:10px;padding:20px;color:#fff;font:calc(20px + .5vw) 'Arial',sans-serif;font-weight:bold;text-transform:uppercase;letter-spacing:1px;z-index:9999;transition:all 2s;animation:slideIn 1s forwards}" +
+                "@keyframes slideIn{0%{transform:translateX(-100%)}100%{transform:translateX(0)}}" +
+                "@keyframes slideOut{0%{transform:translateX(0)}100%{transform:translateX(100%)}";
+            document.head.appendChild(styleElement);
+        };
+
+        const jsNotif = (message, delay = 5000) => {
+            const notifDiv = document.createElement("div");
+            notifDiv.className = "notif";
+            notifDiv.innerHTML = message;
+            notifDiv.style.wordBreak = "break-word";
+            notifDiv.style.width = "fit-content";
+            document.body.appendChild(notifDiv);
+            setTimeout(() => {
+                notifDiv.style.animation = "slideOut 2s forwards";
+                setTimeout(() => {
+                    document.body.removeChild(notifDiv);
+                }, 1000);
+            }, delay);
+        };
+        injectCSSAndAnimations();
+
+        //  Download JSON
+
+        const downloadButton = document.getElementById("downloadButton");
+        downloadButton.addEventListener("click", downloadJSON);
+
+        function downloadJSON() {
+            const configs = {};
+            Object.entries(defaultConfigs).forEach(([key]) => {
+                const input = document.getElementById(key);
+                configs[key] =
+                    input.type === "checkbox" ? input.checked : input.value;
+            });
+
+            const json = JSON.stringify(configs, null, 2);
+            const blob = new Blob([json], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "config.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+
+</html>

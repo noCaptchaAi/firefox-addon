@@ -470,11 +470,12 @@ const jsNotif = (message, duration) => {
 
 const balanceFields = [
     "Balance",
-    "expire",
     "planName",
-    "remaining",
-    "used",
     "wallet_usages",
+    "used",
+    "remaining",
+    "nextReset",
+    "expire",
 ];
 
 const endpointurl = "https://manage.nocaptchaai.com/api/user/get_endpoint";

@@ -1,3 +1,18 @@
+const browserAPI = typeof browser !== "undefined" ? browser : chrome;
+
+document.getElementById("imagePicker").addEventListener("click", function () {
+    browserAPI.runtime.sendMessage({ command: "ImageElementPicker" });
+    console.log("imagePicker");
+    window.close();
+});
+
+document.getElementById("answerPicker").addEventListener("click", function () {
+    browserAPI.runtime.sendMessage({ command: "AnswerElementPicker" });
+    console.log("answerPicker");
+    window.close();
+});
+
+
 browser.storage.onChanged.addListener((changes, area) => {
     if (area === "sync" && changes.yourSyncStorageValue) {
         // Refresh hCaptcha iframes
@@ -39,7 +54,7 @@ function refreshIframes() {
 // Handle Extension Configs
 
 const inputElements = document.querySelectorAll(
-    'input[type="checkbox"], input[type="number"], select'
+    'input[type="checkbox"], input[type="number"],input[type="text"], select'
 );
 
 // Retrieve values from chrome.storage.sync for all input elements
@@ -141,6 +156,8 @@ updateValuesInStorage();
 // });
 
 // modal
+
+const openSettingsModalBtn = document.getElementById("SettingsModalOpenButton");
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("hcModal");
     const openModalBtn = document.getElementById("hcModalOpenButton");
@@ -159,6 +176,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("rcModal");
     const openModalBtn = document.getElementById("rcModalOpenButton");
     const closeModalBtn = document.getElementById("rcModalCloseButton");
+
+    const openModal = () => (modal.style.display = "block");
+    const closeModal = () => (modal.style.display = "none");
+
+    openModalBtn.addEventListener("click", openModal);
+    closeModalBtn.addEventListener("click", closeModal);
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) closeModal();
+    });
+});
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("ocrModal");
+    const openModalBtn = document.getElementById("ocrModalOpenButton");
+    const closeModalBtn = document.getElementById("ocrModalCloseButton");
 
     const openModal = () => (modal.style.display = "block");
     const closeModal = () => (modal.style.display = "none");
@@ -322,22 +353,29 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
             resolve(data);
         });
     });
+    const errorApiElement = document.getElementById("error-api");
 
     const element = document.getElementById(elementId);
-    if (!element && settings.APIKEY == null) {
-        jsNotif("Please enter your API key", 2000);
+    if (element && !settings.APIKEY || settings.APIKEY.length < 1) {
+        errorApiElement.style.display = "block";
+        errorApiElement.style.color = "red";
+        errorApiElement.style.height = "100px";
+        errorApiElement.style.fontSize = "20px";
+        errorApiElement.style.textAlign = "center";
+        errorApiElement.innerHTML = "Please enter APIKEY to start solving";
         return;
     }
+
 
     const response = await fetch(url, {
         headers: {
             apikey: settings.APIKEY,
         },
     });
-
     const data = await response.json();
 
-    const errorApiElement = document.getElementById("error-api");
+
+
     if (data.error) {
         errorApiElement.style.display = "block";
         errorApiElement.style.color = "red";
@@ -440,14 +478,20 @@ const balanceFields = [
 ];
 
 const endpointurl = "https://manage.nocaptchaai.com/api/user/get_endpoint";
-const balanceurl = "https://manage.nocaptchaai.com/balance";
+const probalurl = "https://manage.nocaptchaai.com/balance";
+const freebalurl = "https://free.nocaptchaai.com/balance";
 
 const refreshData = async () => {
+
     const refreshButton = document.getElementById("refresh-button");
     refreshButton.innerHTML = '<img src="/icons/s.svg" alt="██▒▒▒▒▒▒▒▒ 50%" />';
-
-    await fetchAndDisplayData(balanceurl, "balance-section", balanceFields);
-    fetchAndDisplayData(endpointurl, "endpoint-section", ["endpoint", "free"]);
+    let plan;
+    chrome.storage.sync.get(null, (settings) => {
+        console.log(settings.APIKEY);
+        plan = settings.PLANTYPE;
+    });
+    await fetchAndDisplayData(plan === "free" ? freebalurl : probalurl, "balance-section", balanceFields);
+    await fetchAndDisplayData(endpointurl, "endpoint-section", ["endpoint", "free"]);
 
     refreshButton.innerHTML = "Refresh";
     refreshButton.style.fontSize = "16px";
@@ -462,12 +506,35 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // balance end
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const custom = document.getElementById("PLANTYPE");
+custom.addEventListener("change", async () => {
+
+    if (custom.value === "custom") {
+        jsNotif("custom plan only available with cutsom endpoint", 2000);
+        await sleep(2000);
+        openSettingsModalBtn.click();
+    }
+});
 
 const apikeyText = document.getElementById("apikey-text");
 const apikeyInput = document.getElementById("apikey-input");
 const editButton = document.getElementById("edit-button");
 const saveButton = document.getElementById("save-button");
 const deleteButton = document.getElementById("delete-button");
+
+
+apikeyInput.addEventListener('keyup', function (event) {
+    if (event.key === 'Enter') {
+        saveButton.click(); // Trigger the click event of the save button
+    }
+});
+
+// apikeyInput.addEventListener('mouseleave', function () {
+//     saveButton.click(); // Trigger the click event of the save button
+// });
+
 
 const toggleEditMode = () => {
     apikeyText.style.display = "none";
@@ -501,7 +568,11 @@ const deleteApiKey = () => {
     });
     apikeyText.textContent = "";
     apikeyInput.value = "";
+
+    document.getElementById("balance-area").innerHTML = "Apikey Removed";
     saveApiKey();
+    updateApiKeyDisplay("");
+    // refreshData();
 };
 
 const updateApiKeyDisplay = (apikey) => {
@@ -530,7 +601,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 chrome.storage.sync.get(null, (settings) => {
     console.log(settings.APIKEY);
-    // print all of items indefaultConfigs
+    // print all of items in defaultConfigs
 });
 
 // Toaster
@@ -585,3 +656,60 @@ function handleCustomEndpointChange(event) {
         .set({ customEndpoint: newEndpointValue })
         .catch((error) => console.error("Error updating value:", error));
 }
+
+// Export Settings
+
+document.addEventListener("DOMContentLoaded", function () {
+    const exp = document.getElementById("export");
+    exp.addEventListener("click", function () {
+        chrome.storage.sync.get(null, function (items) {
+            const defaultConfigs = {
+                // Global
+                APIKEY: null,
+                PLANTYPE: null,
+                customEndpoint: null,
+                hCaptchaEnabled: true,
+                reCaptchaEnabled: true,
+                dataDomeEnabled: true,
+                ocrEnabled: true,
+                extensionEnabled: true,
+                logsEnabled: false,
+                fastAnimationMode: true,
+                debugMode: false,
+                // hCaptcha
+                hCaptchaAutoOpen: true,
+                hCaptchaAutoSolve: true,
+                hCaptchaGridSolveTime: 7, // seconds
+                hCaptchaMultiSolveTime: 5, // seconds
+                hCaptchaBoundingBoxSolveTime: 5, // seconds
+                hCaptchaAlwaysSolve: true,
+                englishLanguage: true,
+                // reCaptcha
+                reCaptchaAutoOpen: true,
+                reCaptchaAutoSolve: true,
+                reCaptchaAlwaysSolve: true,
+                reCaptchaClickDelay: 400, // milliseconds
+                reCaptchaSubmitDelay: 1, // seconds
+                reCaptchaSolveType: "image", // for default audio use "audio"
+            };
+
+            // Use keys from defaultConfigs to get values from sync storage
+            const settings = {};
+            for (const key in defaultConfigs) {
+                settings[key] = items[key] ?? defaultConfigs[key];
+            }
+
+            const data = JSON.stringify(settings, null, 2);
+            const blob = new Blob([data], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+
+            a.download = "settings.json";
+            a.href = url;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    });
+});

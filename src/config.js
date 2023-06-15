@@ -40,9 +40,9 @@
             const endpoint = searchParams.get("endpoint");
 
             await chrome.storage.sync.set({
-                APIKEY: apiKey?.length > 0 ? apiKey : null,
-                PLANTYPE: planType?.length > 0 ? planType : null,
-                customEndpoint: endpoint?.length > 0 ? endpoint : null,
+                APIKEY: apiKey?.length > 0 ? apiKey.toLowerCase() : null,
+                PLANTYPE: planType?.length > 0 ? planType.toLowerCase() : null,
+                customEndpoint: endpoint?.length > 0 ? endpoint.toLowerCase() : null,
             });
 
             const settings = await chrome.storage.sync.get(null);
@@ -62,11 +62,14 @@
                 if (result.error) {
                     jsNotif(
                         result.error +
-                            "\n noCaptchaAi Extension Config failed ✘"
+                        "\n noCaptchaAi Extension Config failed ✘"
                     );
-                    chrome.storage.sync.set({ APIKEY: "" });
+                    // chrome.storage.sync.set({ APIKEY: "" });
                 } else {
-                    handlePlan(result, searchParams);
+                    jsNotif(
+                        "noCaptchaAi Extension Config Successful ✔️"
+                    );
+                    // handlePlan(result, searchParams, settings.PLANTYPE);
                 }
             }
         }
@@ -74,33 +77,34 @@
         jsNotif("An error occurred: " + error.message);
     }
 
-    async function handlePlan(result, searchParams) {
-        if (result.plan === "free") {
-            successfulConfig("noCaptchaAi Extension \n Config Successful ✔️");
-            refreshIframes();
-        } else if (["daily", "unlimited", "wallet"].includes(result.plan)) {
-            if (result.custom) {
-                await chrome.storage.sync.set({
-                    PLANTYPE: "custom",
-                    customEndpoint: result.custom.includes(
-                        searchParams.endpoint
-                    )
-                        ? searchParams.endpoint
-                        : result.custom[0],
-                });
-                successfulConfig(
-                    "noCaptchaAi Extension Custom plan \n Config Successful ✔️"
-                );
-                return;
-            }
-            await chrome.storage.sync.set({
-                PLANTYPE: "pro",
-            });
-            successfulConfig(
-                `noCaptchaAi Extension ${result.plan} plan \n Config Successful ✔️`
-            );
-        }
-    }
+    // async function handlePlan(result, searchParams, plantype) {
+    //     if (result.plan === "free") {
+    //         successfulConfig("noCaptchaAi Extension \n Config Successful ✔️");
+    //         refreshIframes();
+    //     } else if (["daily", "unlimited", "wallet"].includes(result.plan)) {
+    //         const settings = await chrome.storage.sync.get(null);
+    //         if (result.custom && plantype ) {
+    //             await chrome.storage.sync.set({
+    //                 PLANTYPE: "custom",
+    //                 customEndpoint: result.custom.includes(
+    //                     searchParams.endpoint
+    //                 )
+    //                     ? searchParams.endpoint
+    //                     : result.custom[0],
+    //             });
+    //             successfulConfig(
+    //                 "noCaptchaAi Extension Custom plan \n Config Successful ✔️"
+    //             );
+    //             return;
+    //         }
+    //         await chrome.storage.sync.set({
+    //             PLANTYPE: "pro",
+    //         });
+    //         successfulConfig(
+    //             `noCaptchaAi Extension ${result.plan} plan \n Config Successful ✔️`
+    //         );
+    //     }
+    // }
 
     function successfulConfig(message) {
         jsNotif(message);

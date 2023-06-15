@@ -7,7 +7,8 @@ body,
 body {
     margin: 8px;
     min-width: 350px;
-    min-height: 480px;
+    min-height: 500px;
+    overflow: hidden;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: #d8d4ee3b;
 }
@@ -20,6 +21,18 @@ body {
     justify-content: space-between;
     align-items: baseline;
     align-items: baseline;
+}
+#export {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    align-items: baseline;
+    margin: 5px;
+}
+#export:hover {
+    cursor: pointer;
+    color: #854a06;
 }
 .footer {
     display: flex;
@@ -86,7 +99,7 @@ body {
     align-items: normal;
 }
 .captcha-block:hover {
-    background: #1ba755ad;
+    background: #22d36b79;
     transition: ease-in-out 0.2s;
 }
 #header h1 {
@@ -315,10 +328,18 @@ label {
 
 .links {
     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: baseline;
     gap: 5px;
-    font-size: large;
-    margin: 0 auto;
-    padding: 10px;
+}
+.settingsfooter {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 /* APIKEY */
@@ -444,6 +465,7 @@ h2 {
     background: #2195f357;
     border-radius: 8px;
     padding: 4px;
+    padding-top: 10px;
 }
 #apikey-text {
     width: 96%;
@@ -451,7 +473,17 @@ h2 {
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-left: 2%;
+    /* padding-top: 5px; */
     margin: 0 auto;
+}
+button {
+    border: 2px solid #14141425;
+    box-shadow: inset 0 0 0 0 #14141425;
+    background: #08aed87c;
+}
+button:hover {
+    /* add 3d button effect */
+    box-shadow: inset 0 0 0 10px #14141425;
 }
 
 .edit-mode .edit-button {
@@ -470,10 +502,14 @@ h2 {
     cursor: pointer;
 }
 .save-button:hover {
-    color: #2196f3;
+    color: #000702;
 }
 .delete-button:hover {
     color: #db3c3c;
+}
+.pair {
+    display: flex;
+    flex-direction: row;
 }
 .keybtnpair {
     display: flex;
@@ -496,6 +532,14 @@ h2 {
 }
 
 /* BTTTOn */
+.btn {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    font-size: normal;
+}
 
 /* Toast */
 

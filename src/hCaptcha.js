@@ -396,11 +396,9 @@ const version = "1.0";
         }
 
         async function getApi(v) {
-            const k = (await chrome.storage.sync.get("endpoint"))
-                .customEndpoint;
             if (settings.PLANTYPE === "custom") {
                 // console.log("custom endpoint", k);
-                return "https://" + k + "/" + v;
+                return "https://" + settings.customEndpoint + "/" + v;
             }
             return "https://" + settings.PLANTYPE + ".nocaptchaai.com/" + v;
         }

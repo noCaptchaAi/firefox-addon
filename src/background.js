@@ -51,136 +51,6 @@ chrome.runtime.onInstalled.addListener((details) => {
         });
     }
 
-    async function getPlanType(APIKEY) {
-        if (!APIKEY) {
-            throw new Error("Missing API key");
-        }
-
-        try {
-            const response = await fetch(
-                "https://manage.nocaptchaai.com/api/user/get_endpoint",
-                {
-                    headers: {
-                        apikey: APIKEY,
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(
-                    `API request failed with status ${response.status}`
-                );
-            }
-
-            const data = await response.json();
-            const { plan, endpoint } = data;
-
-            return { plan, endpoint };
-        } catch (error) {
-            console.error(error);
-            throw new Error("API request failed");
-        }
-    }
-
-    async function getPlanType(APIKEY) {
-        if (!APIKEY) {
-            throw new Error("Missing API key");
-        }
-
-        try {
-            const response = await fetch(
-                "https://manage.nocaptchaai.com/api/user/get_endpoint",
-                {
-                    headers: {
-                        apikey: APIKEY,
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(
-                    `API request failed with status ${response.status}`
-                );
-            }
-
-            const data = await response.json();
-            const { plan, endpoint } = data;
-
-            return { plan, endpoint };
-        } catch (error) {
-            console.error(error);
-            throw new Error("API request failed");
-        }
-    }
-
-    async function getPlanType(APIKEY) {
-        if (!APIKEY) {
-            throw new Error("Missing API key");
-        }
-
-        try {
-            const response = await fetch(
-                "https://manage.nocaptchaai.com/api/user/get_endpoint",
-                {
-                    headers: {
-                        apikey: APIKEY,
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(
-                    `API request failed with status ${response.status}`
-                );
-            }
-
-            const data = await response.json();
-            console.log(data);
-            const { plan, endpoint } = data;
-
-            console.log("Plan type:", plan, "Endpoint:", endpoint);
-
-            return { plan, endpoint };
-        } catch (error) {
-            console.error(error);
-            throw new Error("API request failed");
-        }
-    }
-
-    chrome.runtime.onMessage.addListener(function (request, sender) {
-        if (request.greeting == "getPlanType") {
-            chrome.storage.sync.get(null, async (data) => {
-                if (!chrome.runtime.lastError) {
-                    try {
-                        const { plan } = await getPlanType(data.APIKEY);
-                        if (!plan) {
-                            chrome.tabs.sendMessage(sender.tab.id, {
-                                farewell: "planType couldn't set",
-                            });
-                            throw new Error("Plan type not found");
-                        } else if (plan == "free") {
-                            chrome.storage.sync.set({ PLANTYPE: "free" });
-                            chrome.tabs.sendMessage(sender.tab.id, {
-                                farewell: `planType set to "free"`,
-                            });
-                        } else if (
-                            plan == "daily" ||
-                            plan == "unlimited" ||
-                            plan == "wallet"
-                        ) {
-                            chrome.storage.sync.set({ PLANTYPE: "pro" });
-                            chrome.tabs.sendMessage(sender.tab.id, {
-                                farewell: `planType set to "pro"`,
-                            });
-                        }
-                    } catch (error) {
-                        console.error(error);
-                    }
-                }
-            });
-        }
-    });
-
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === "sendTask") {
             fetch(request.url, {
@@ -237,6 +107,15 @@ chrome.runtime.onInstalled.addListener((details) => {
         }
     });
 });
+
+
+// element picker
+browser.runtime.onMessage.addListener((request) => {
+    browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        browser.tabs.sendMessage(tabs[0].id, { command: request.command });
+    });
+});
+
 
 // chrome.runtime.onInstalled.addListener(() => {
 //   //  global config
@@ -316,3 +195,6 @@ chrome.runtime.onInstalled.addListener((details) => {
 //   });
 
 // });
+
+
+

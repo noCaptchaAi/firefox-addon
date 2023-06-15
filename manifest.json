@@ -28,11 +28,17 @@
     },
     "browser_specific_settings": {
         "gecko": {
-            "id": "oss@noCaptchaAi.com",
-            "strict_min_version": "42.0"
+            "id": "firefox@noCaptchaAi.com",
+            "strict_min_version": "82.0"
         }
     },
     "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["src/elementPicker.js"],
+            "all_frames": true,
+            "match_about_blank": false
+        },
         {
             "matches": ["<all_urls>"],
             "js": ["src/hCaptcha.js"],

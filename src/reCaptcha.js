@@ -102,32 +102,27 @@
                 document.createElement("style")
             ).sheet;
             s.insertRule(
-                `.rc-imageselect-table-33, .rc-imageselect-table-42, .rc-imageselect-table-44 {transition-duration: ${
-                    1 / f
+                `.rc-imageselect-table-33, .rc-imageselect-table-42, .rc-imageselect-table-44 {transition-duration: ${1 / f
                 }s !important}`,
                 0
             ),
                 s.insertRule(
-                    `.rc-imageselect-tile {transition-duration: ${
-                        4 / f
+                    `.rc-imageselect-tile {transition-duration: ${4 / f
                     }s !important}`,
                     1
                 ),
                 s.insertRule(
-                    `.rc-imageselect-dynamic-selected {transition-duration: ${
-                        2 / f
+                    `.rc-imageselect-dynamic-selected {transition-duration: ${2 / f
                     }s !important}`,
                     2
                 ),
                 s.insertRule(
-                    `.rc-imageselect-progress {transition-duration: ${
-                        1 / f
+                    `.rc-imageselect-progress {transition-duration: ${1 / f
                     }s !important}`,
                     3
                 ),
                 s.insertRule(
-                    `.rc-image-tile-overlay {transition-duration: ${
-                        1 / f
+                    `.rc-image-tile-overlay {transition-duration: ${1 / f
                     }s !important}`,
                     4
                 ),
@@ -278,10 +273,10 @@
         const type = RC.is44()
             ? "44"
             : RC.is33()
-            ? "33"
-            : RC.is11()
-            ? "split_33"
-            : null;
+                ? "33"
+                : RC.is11()
+                    ? "split_33"
+                    : null;
         if (!type) return;
         const [target, src, grid] = await data();
         const images =
@@ -399,7 +394,7 @@
         }
         for (const index of solution) {
             fireMouseEvents(cells[index]);
-            await sleep(settings.RclickDelay);
+            await sleep(settings.reCaptchaClickDelay);
         }
 
         if (RC.isDynamic33() === false) {
@@ -415,12 +410,12 @@
             return split33(target, solution);
         }
         if (isMulti) {
-            await sleep(settings.RsubmitDelay * 1000);
+            await sleep(settings.reCaptchaSubmitDelay * 1000);
             submit();
-            await sleep(settings.RsubmitDelay * 1000);
+            await sleep(settings.reCaptchaSubmitDelay * 1000);
             return multi(target);
         }
-        await sleep(settings.RsubmitDelay * 1000);
+        await sleep(settings.reCaptchaSubmitDelay * 1000);
         submit();
     }
 
@@ -464,7 +459,7 @@
 
         for (const index of solution) {
             fireMouseEvents(cells[index]);
-            await sleep(settings.RclickDelay);
+            await sleep(settings.reCaptchaClickDelay);
         }
         await sleep(1000);
         split33(target, solution);
@@ -497,12 +492,12 @@
             return submit();
         }
         for (const index of solution) {
-            await sleep(settings.RclickDelay);
+            await sleep(settings.reCaptchaClickDelay);
             fireMouseEvents(cells[index]);
         }
 
         submit();
-        await sleep(settings.RsubmitDelay * 1000);
+        await sleep(settings.reCaptchaSubmitDelay * 1000);
         return multi(target);
     }
 

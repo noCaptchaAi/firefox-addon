@@ -47,6 +47,12 @@
         },
         {
             "matches": ["<all_urls>"],
+            "js": ["src/ocr.js"],
+            "all_frames": true,
+            "match_about_blank": false
+        },
+        {
+            "matches": ["<all_urls>"],
             "js": ["src/iframes.js"],
             "all_frames": true,
             "match_about_blank": false

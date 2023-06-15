@@ -1,6 +1,6 @@
 const version = "1.0";
 (async () => {
-    console.log("hCaptcha.js loaded");
+    // console.log("hCaptcha.js loaded");
     let settings = await chrome.storage.sync.get(null);
     let blist = await chrome.storage.sync.get(null);
     if (!settings.APIKEY) return;

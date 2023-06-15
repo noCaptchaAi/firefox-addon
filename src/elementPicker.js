@@ -209,13 +209,12 @@ function selectElement(event) {
         if (cssPath) {
             // Create a new object for the new domain data
             const newDomainData = {
-                target: cssPath,
-                type: selectedType,
+                target: cssPath
             };
 
             // Merge the existing data with the new domain data
             const updatedData = { ...existingData };
-            updatedData[window.location.hostname] = newDomainData;
+            updatedData[window.location.hostname+"-"+selectedType] = newDomainData;
 
             // Store the updated data back into sync storage
             browser.storage.sync.set({ domainData: updatedData }, function () {

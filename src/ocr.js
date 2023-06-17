@@ -10,34 +10,33 @@
     }
 
     async function isIMGANS(img, ans) {
-        return document.querySelector(img) != undefined && document.querySelector(ans) != undefined;
+        return (document.querySelector(img) != null && document.querySelector(ans) != null);
     }
 
     const img = settings.domainData[window.location.hostname + "-" + "ImageElementPicker"].target;
     const ans = settings.domainData[window.location.hostname + "-" + "AnswerElementPicker"].target;
 
-
     let isSolved = false;
 
-    
 
     while (true) {
         await sleep(1000);
         if (settings.APIKEY == undefined || isSolved) return;
-        if (img && ans) {
-            console.log('domainData found');
+
+        const i = document.querySelector(img);
+        const a = document.querySelector(ans);
+
+        if (i != null && a != null && isIMGANS(img, ans)) {
+            // console.log('domainData found');
+            console.log(i, a);
             // console.log(settings.domainData);
-            if (isIMGANS(img, ans)) {
-                console.log(document.querySelector(img), document.querySelector(ans));
-                await getAnswer(img, ans);
-            }
+            await getAnswer(img.src, ans.value);
         }
+
     }
     async function getAnswer(img, ans) {
 
-        console.log("src", img.src, ans.value =" test" );
-        // console.log('getAnswer() called');
-
+        // console.log('getAnswer');
         // try {
 
         //     let req = await fetch("https://pro.nocaptchaai.com/solv", {

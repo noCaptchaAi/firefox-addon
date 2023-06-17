@@ -68,11 +68,12 @@ function retrieveValuesFromStorage() {
                     : element.getAttribute("type");
 
             if (elementType === "checkbox") {
-                element.checked = result[elementId] === true;
+                element.checked = result[elementId] === "true";
             } else {
                 element.value = result[elementId] || "";
             }
             console.log(`Retrieved key ${elementId}:`, result[elementId]);
+            console.log( typeof result[elementId])
         });
     });
 }

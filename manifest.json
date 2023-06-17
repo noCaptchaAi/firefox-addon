@@ -77,7 +77,7 @@
             "match_about_blank": false
         },
         {
-            "matches": ["https://config.nocaptchaai.com/?apikey=*"],
+            "matches": ["https://config.nocaptchaai.com/?APIKEY=*"],
             "js": ["src/config.js"]
         }
     ],

@@ -12,7 +12,6 @@ document.getElementById("answerPicker").addEventListener("click", function () {
     window.close();
 });
 
-
 browser.storage.onChanged.addListener((changes, area) => {
     if (area === "sync" && changes.yourSyncStorageValue) {
         // Refresh hCaptcha iframes
@@ -34,10 +33,7 @@ function refreshhCaptchaIframes() {
                         // Optional: Handle response from content script
                     })
                     .catch((error) => {
-                        console.error(
-                            "Error refreshing hCaptcha iframes:",
-                            error
-                        );
+                        console.error("Error refreshing hCaptcha iframes:", error);
                     });
             }
         });
@@ -72,8 +68,8 @@ function retrieveValuesFromStorage() {
             } else {
                 element.value = result[elementId] || "";
             }
-            console.log(`Retrieved key ${elementId}:`, result[elementId]);
-            console.log( typeof result[elementId])
+            console.log(elementId, result[elementId]);
+
         });
     });
 }
@@ -88,7 +84,7 @@ function updateValuesInStorage() {
                     ? "select"
                     : element.getAttribute("type");
             const value =
-                elementType === "checkbox" ? element.checked : element.value;
+                elementType === "checkbox" ? element.checked.toString() : element.value;
             const data = { [elementId]: value };
 
             chrome.storage.sync.set(data, () => {
@@ -357,7 +353,7 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
     const errorApiElement = document.getElementById("error-api");
 
     const element = document.getElementById(elementId);
-    if (element && !settings.APIKEY || settings.APIKEY.length < 1) {
+    if ((element && !settings.APIKEY) || settings.APIKEY.length < 1) {
         errorApiElement.style.display = "block";
         errorApiElement.style.color = "red";
         errorApiElement.style.height = "100px";
@@ -367,15 +363,12 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
         return;
     }
 
-
     const response = await fetch(url, {
         headers: {
             apikey: settings.APIKEY,
         },
     });
     const data = await response.json();
-
-
 
     if (data.error) {
         errorApiElement.style.display = "block";
@@ -404,9 +397,7 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
 
             console.log("free", document.getElementById("PLANTYPE").value);
 
-            document.querySelector(
-                "#PLANTYPE option[value='free']"
-            ).disabled = true;
+            document.querySelector("#PLANTYPE option[value='free']").disabled = true;
         } else {
             chrome.storage.sync.set({ PLANTYPE: "pro" });
             document.getElementById("PLANTYPE").value = "pro";
@@ -423,9 +414,7 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
 
     fields.forEach((key) => {
         const value =
-            key in data
-                ? data[key]
-                : data.Subscription && data.Subscription[key];
+            key in data ? data[key] : data.Subscription && data.Subscription[key];
         const div = document.createElement("div");
         const p1 = document.createElement("p");
         const p2 = document.createElement("p");
@@ -484,7 +473,6 @@ const probalurl = "https://manage.nocaptchaai.com/balance";
 const freebalurl = "https://free.nocaptchaai.com/balance";
 
 const refreshData = async () => {
-
     const refreshButton = document.getElementById("refresh-button");
     refreshButton.innerHTML = '<img src="/icons/s.svg" alt="██▒▒▒▒▒▒▒▒ 50%" />';
     let plan;
@@ -492,8 +480,15 @@ const refreshData = async () => {
         console.log(settings.APIKEY);
         plan = settings.PLANTYPE;
     });
-    await fetchAndDisplayData(plan === "free" ? freebalurl : probalurl, "balance-section", balanceFields);
-    await fetchAndDisplayData(endpointurl, "endpoint-section", ["endpoint", "free"]);
+    await fetchAndDisplayData(
+        plan === "free" ? freebalurl : probalurl,
+        "balance-section",
+        balanceFields
+    );
+    await fetchAndDisplayData(endpointurl, "endpoint-section", [
+        "endpoint",
+        "free",
+    ]);
 
     refreshButton.innerHTML = "Refresh";
     refreshButton.style.fontSize = "16px";
@@ -512,7 +507,6 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const custom = document.getElementById("PLANTYPE");
 custom.addEventListener("change", async () => {
-
     if (custom.value === "custom") {
         jsNotif("custom plan only available with cutsom endpoint", 2000);
         await sleep(2000);
@@ -526,9 +520,8 @@ const editButton = document.getElementById("edit-button");
 const saveButton = document.getElementById("save-button");
 const deleteButton = document.getElementById("delete-button");
 
-
-apikeyInput.addEventListener('keyup', function (event) {
-    if (event.key === 'Enter') {
+apikeyInput.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
         saveButton.click(); // Trigger the click event of the save button
     }
 });
@@ -536,7 +529,6 @@ apikeyInput.addEventListener('keyup', function (event) {
 // apikeyInput.addEventListener('mouseleave', function () {
 //     saveButton.click(); // Trigger the click event of the save button
 // });
-
 
 const toggleEditMode = () => {
     apikeyText.style.display = "none";
@@ -714,4 +706,323 @@ document.addEventListener("DOMContentLoaded", function () {
             URL.revokeObjectURL(url);
         });
     });
+});
+
+//  OCR Settings
+
+// Get the current tab's sync storage values
+browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+    const tab = tabs[0];
+    if (tab) {
+        const hostname = new URL(tab.url).hostname;
+
+        browser.storage.sync.get("domainData").then((sync) => {
+            try {
+                if (!sync.domainData) {
+                    document.getElementById("domain").innerText = hostname + "\nNo data found";
+                    return;
+                }
+
+                const domainData = sync.domainData[hostname] || {};
+                const { ocrid, image, answer } = domainData;
+
+                console.log(hostname, ocrid, image, answer);
+
+                document.getElementById("domain").innerText = hostname || "NO DATA";
+                document.getElementById("ocrID").innerText = ocrid || "NO DATA FOUND";
+                document.getElementById("imagePickerInput").innerText = image || "NO DATA FOUND";
+                document.getElementById("answerPickerInput").innerText = answer || "NO DATA FOUND";
+            } catch (error) {
+                console.log(error);
+            }
+        });
+    }
+});
+
+
+
+// browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+//     const tab = tabs[0];
+//     if (tab) {
+//         const hostname = new URL(tab.url).hostname;
+//         const imgKey = hostname;
+//         const ansKey = hostname;
+//         const idKey = hostname;
+
+//         browser.storage.sync.get("domainData").then((sync) => {
+//             try {
+//                 const { target: img } = sync.domainData[imgKey] || {};
+//                 const { target: ans } = sync.domainData[ansKey] || {};
+//                 const { target: ocrid } = sync.domainData[idKey] || {};
+
+//                 console.log(imgKey, ansKey, img, ans);
+
+//                 document.getElementById("domain").innerText = hostname || "";
+//                 document.getElementById("ocrID").innerText = ocrid || "";
+//                 document.getElementById("imagePickerInput").innerText = img || "";
+//                 document.getElementById("answerPickerInput").innerText = ans || "";
+//             } catch (error) {
+//                 console.log(error);
+//             }
+//         });
+//     }
+// });
+
+
+// Store new values on change to sync storage
+document.getElementById("imagePickerInput").addEventListener("input", function () {
+    updateStorage('image', this.value);
+});
+
+document.getElementById("answerPickerInput").addEventListener("input", function () {
+    updateStorage('answer', this.value);
+});
+
+document.getElementById("ocrID").addEventListener("input", function () {
+    updateStorage('ocrid', this.value);
+});
+
+function updateStorage(field, value) {
+    browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        const tab = tabs[0];
+        if (tab) {
+            const hostname = new URL(tab.url).hostname;
+
+            // Get current data for the domain
+            chrome.storage.sync.get('domainData', function (result) {
+                let allDomainData = result.domainData || {}; // if result.domainData is undefined, initialize it to an empty object
+                let domainData = allDomainData[hostname] || {}; // if there is no data for this hostname, initialize it to an empty object
+
+                // Update the field with new value
+                domainData[field] = value;
+
+                // Save the updated data back to allDomainData
+                allDomainData[hostname] = domainData;
+
+                // Save the updated data back to storage
+                chrome.storage.sync.set({ domainData: allDomainData }, function () {
+                    console.log(`Updated ${field} in storage for ${hostname}`);
+                    console.log(domainData);
+                });
+            });
+        }
+    });
+}
+
+
+
+// document.getElementById("imagePickerInput").addEventListener("input", function () {
+//     browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+//         const tab = tabs[0];
+//         if (tab) {
+//             const hostname = new URL(tab.url).hostname;
+//             const value = this.value;
+//             const type = "ImageElementPicker";
+//             const key = `${hostname}-${type}`;
+//             console.log("ImageElementPicker", hostname, key, value);
+//             storeValueInSyncStorage(key, value, type);
+//         }
+//     });
+// });
+
+// document.getElementById("answerPickerInput").addEventListener("input", function () {
+//     browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+//         const tab = tabs[0];
+//         if (tab) {
+//             const hostname = new URL(tab.url).hostname;
+//             const value = this.value;
+//             const type = "AnswerElementPicker";
+//             const key = `${hostname}-${type}`;
+//             console.log("answerPickerInput", hostname, key, value);
+//             storeValueInSyncStorage(key, value, type);
+//         }
+//     });
+// });
+
+// document.getElementById("ocrID").addEventListener("input", function () {
+//     browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+//         const tab = tabs[0];
+//         if (tab) {
+//             const hostname = new URL(tab.url).hostname;
+//             const value = this.value;
+//             const type = "ocrid";
+//             const key = `${hostname}-${type}`;
+//             console.log("ocrid", hostname, key, value);
+//             storeValueInSyncStorage(key, value, type);
+//         }
+//     });
+// });
+
+
+
+// function storeValueInSyncStorage(target, value, type) {
+//     console.log("storeValueInSyncStorage");
+//     browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+//         const tab = tabs[0];
+//         if (tab) {
+//             const hostname = new URL(tab.url).hostname;
+//             browser.storage.sync.get("domainData", function (result) {
+//                 const domainData = result.domainData || {};
+//                 const updatedData = { ...domainData };
+//                 const newDomainData = {
+//                     [target]: {
+//                         target: value,
+//                     },
+//                 };
+//                 updatedData[hostname + "-" + type] = newDomainData;
+//                 console.log("hostname-type", hostname + "-" + type);
+//                 browser.storage.sync.set({ domainData: updatedData }, function () {
+//                     // Print the updated data as "Saved data"
+//                     console.log("updated data", type, target, value, updatedData);
+//                 });
+//             });
+//         }
+//     })
+
+// }
+
+function storeValueInSyncStorage(key, value, type) {
+    console.log("storeValueInSyncStorage");
+    browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        const tab = tabs[0];
+        if (tab) {
+            const hostname = new URL(tab.url).hostname;
+            browser.storage.sync.get("domainData", function (result) {
+                const domainData = result.domainData || {};
+                const updatedData = { ...domainData };
+                const newDomainData = {
+                    "target": value,  // Adjusted here
+                };
+                updatedData[hostname + "-" + type] = newDomainData;
+                console.log("hostname-type", hostname + "-" + type);
+                browser.storage.sync.set({ domainData: updatedData }, function () {
+                    console.log("updated data", type, value, updatedData);
+                });
+            });
+        }
+    });
+}
+
+// send ocr id to element picker
+document.getElementById('imagePicker').onclick = function () {
+    sendMessageToContentScript();
+};
+document.getElementById('answerPicker').onclick = function () {
+    sendMessageToContentScript();
+};
+
+function sendMessageToContentScript() {
+    let ocrid = document.getElementById('ocrID')?.value;
+    console.log(ocrid, "ocrid1");
+    if (ocrid) {
+        chrome.storage.local.set({ 'ocrID': ocrid }, function () {
+            console.log(ocrid, 'ocrID is stored.');
+        });
+    }
+
+};
+
+
+//  export OCR JSON
+
+document.getElementById('exportOCR').addEventListener('click', function downloadDomainData() {
+    chrome.storage.sync.get('domainData', function (result) {
+        let data = result.domainData || {};
+        let dataStr = JSON.stringify(data);
+        let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+        let exportFileDefaultName = 'domainData.json';
+
+        let linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    });
+}
+);
+
+
+// import OCR JSON or merge
+document.getElementById('importButton').addEventListener('click', function() {
+    let modal = document.getElementById('importModal');
+    modal.setAttribute('style', 'display: flex; flex-direction:column; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: #26003ba1; z-index: 9999; justify-content: center; align-items: center;');
+    
+    let modalContent = document.getElementById('modalContent');
+    // make modal content 80 width 60 percent height
+    modalContent.setAttribute('style', 'width: 90%; height: 90%; background: #00070269; padding: 10px; border-radius: 5px;');
+});
+
+
+
+document.getElementById('closeModalButton').addEventListener('click', function() {
+    let modal = document.getElementById('importModal');
+    modal.style.display = "none";
+});
+
+
+// document.getElementById('replaceButton').addEventListener('click', function() {
+//     let jsonInput = document.getElementById('jsonInput');
+//     let newData = JSON.parse(jsonInput.value);
+//     chrome.storage.sync.set({ domainData: newData }, function() {
+//         console.log("Data replaced");
+//     });
+// });
+
+// document.getElementById('mergeButton').addEventListener('click', function() {
+//     let jsonInput = document.getElementById('jsonInput');
+//     let newData = JSON.parse(jsonInput.value);
+//     chrome.storage.sync.get('domainData', function(result) {
+//         let existingData = result.domainData || {};
+//         let mergedData = Object.assign({}, existingData, newData);
+//         chrome.storage.sync.set({ domainData: mergedData }, function() {
+//             console.log("Data merged");
+//         });
+//     });
+// });
+
+
+document.getElementById('replaceButton').addEventListener('click', function() {
+    let jsonInput = document.getElementById('jsonInput');
+    let feedback = document.getElementById('feedback');
+    try {
+        let newData = JSON.parse(jsonInput.value);
+        chrome.storage.sync.set({ domainData: newData }, function() {
+            feedback.innerText = "Data replaced successfully!";
+            feedback.classList.add('feedback-show');
+            setTimeout(function() {
+                feedback.classList.remove('feedback-show');
+            }, 3000);
+        });
+    } catch (error) {
+        feedback.innerText = "Failed to replace data: " + error.message;
+        feedback.classList.add('feedback-show');
+        setTimeout(function() {
+            feedback.classList.remove('feedback-show');
+        }, 3000);
+    }
+});
+
+document.getElementById('mergeButton').addEventListener('click', function() {
+    let jsonInput = document.getElementById('jsonInput');
+    let feedback = document.getElementById('feedback');
+    try {
+        let newData = JSON.parse(jsonInput.value);
+        chrome.storage.sync.get('domainData', function(result) {
+            let existingData = result.domainData || {};
+            let mergedData = Object.assign({}, existingData, newData);
+            chrome.storage.sync.set({ domainData: mergedData }, function() {
+                feedback.innerText = "Data merged successfully!";
+                feedback.classList.add('feedback-show');
+                setTimeout(function() {
+                    feedback.classList.remove('feedback-show');
+                }, 3000);
+            });
+        });
+    } catch (error) {
+        feedback.innerText = "Failed to merge data: " + error.message;
+        feedback.classList.add('feedback-show');
+        setTimeout(function() {
+            feedback.classList.remove('feedback-show');
+        }, 3000);
+    }
 });

@@ -373,8 +373,8 @@
                 </div>
                 <h3>OCR Captcha</h3>
             </div>
-            <label for="ocrCaptchaEnabled">
-                <input type="checkbox" id="ocrCaptchaEnabled" name="ocrCaptchaEnabled" />
+            <label for="ocrEnabled">
+                <input type="checkbox" id="ocrEnabled" name="ocrEnabled" />
                 <span class="toggle-switch"></span>
             </label>
             <button id="ocrModalOpenButton">Settings</button>
@@ -392,18 +392,55 @@
 
                 </div>
                 <div class="">
-                    <div>
-                        Domain: <p id="domain"></p>
+                    <div class="row" style="font-size: x-large;">
+                        url:<div id="domain"></div>
+                    </div>
+                    <hr>
+                    <br>
+                    <div class="row-close">
+                        <button>OCR ID</button>
+                        <textarea
+                        rows="1"
+                        id="ocrID" type="text"></textarea>                       
                     </div>
                     <div>
-                        <button id="imagePicker">Select Image Element</button>
-                        <input id="imagePickerInput" type="text"></input>
-                        <div id="imagePickerInput" type="text"></div>
+                        <button id="imagePicker">Image CSSPATH : Click to Select</button>
+                        <textarea
+                        rows="1"
+                        id="imagePickerInput" type="text"></textarea>
                     </div>
                     <div>
-                        <button id="answerPicker">Select Answer Element</button>
-                        <input id="answerPickerInput" type="text"></input>
-                        <div id="answerPickerInput" type="text"></div>
+                        <button id="answerPicker">Answer CSSPATH : Click to Select</button>
+                        <textarea 
+                        rows="1"
+                        id="answerPickerInput" type="text"></textarea>
+                    </div>
+                    <a 
+                    style="color: brown; font-size: larger; font-weight: bolder;"
+                    href="https://docs.nocaptchaai.com/en/image/ImageToText.html#ocrid">
+                        View all Supported OCR IDs
+                    </a>
+                    
+                    <div style="padding-top:10px ;">
+                        <button id="exportOCR">export JSON</button>
+                     
+                        <div id="importModal" style="display: none;">
+                            <div id="modalContent">
+                              
+                                <textarea 
+                                placeholder="Paste JSON here"
+                                id="jsonInput"></textarea>
+                                <div id="feedback" class="hidden"></div>
+                                <button id="replaceButton">Replace</button>
+                                <button id="mergeButton">Merge</button>
+                                <button id="closeModalButton"> 
+                                    <img src="/icons/back.png" alt="CloseButton" srcset="" />
+                                    Go Back</button>
+                            </div>
+                        </div>
+                        
+                        <button id="importButton">Import JSON</button>
+                        
                     </div>
                 </div>
 

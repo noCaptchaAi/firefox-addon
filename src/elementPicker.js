@@ -173,6 +173,24 @@ function createStickyElement(type) {
 
     return stickyElement;
 }
+const jsNotif = (m, d) => {
+    const t = document.createElement("div");
+    (t.style.cssText =
+        "position:fixed;top:10%;left:0;background-color:rgba(0,0,0,.8);border-radius:4px;padding:16px;color:#fff;font:calc(14px + .5vw) 'Arial',sans-serif;font-weight:bold;text-transform:uppercase;letter-spacing:1px;z-index:9999;transition:all 1s;animation:slideIn 1s forwards"),
+        (t.innerHTML = m),
+        document.body.appendChild(t);
+    const o = document.createElement("style");
+    (o.innerHTML =
+        "@keyframes slideIn{0%{transform:translateX(-100%)}100%{transform:translateX(0)}}@keyframes slideOut{0%{transform:translateX(0)}100%{transform:translateX(100%)}}"),
+        document.head.appendChild(o);
+    setTimeout(() => {
+        (t.style.animation = "slideOut 1s forwards"),
+            setTimeout(() => {
+                document.body.removeChild(t);
+            }, 1e3);
+    }, d || 3e3);
+};
+
 
 function selectElement(event) {
     event.stopPropagation();
@@ -185,46 +203,58 @@ function selectElement(event) {
         return;
     }
 
-    // let urlData = {};
-    // const cssPath = getCssPath(element);
-    // if (cssPath) {
-    //     urlData[window.location.hostname] = {
-    //         target: cssPath,
-    //         type: selectedType,
-    //     };
-    // } else {
-    //     handleError("save error: CSS Path not found");
-    // }
-    // console.log("Saved data", urlData);
-
-    // Retrieve existing data from sync storage
-    browser.storage.sync.get("domainData", function (result) {
-        // Check if domainData exists in the retrieved result
+    browser.storage.sync.get("domainData", async function (result) {
         const existingData = result.domainData || {};
-
-        // Print the existing storage data as "Existing data"
         console.log("Existing data", existingData);
-
+    
         const cssPath = getCssPath(element);
         if (cssPath) {
-            // Create a new object for the new domain data
+            const s = await chrome.storage.local.get(null);
+            console.log("s.ocrID", s.ocrID);
+    
             const newDomainData = {
-                target: cssPath
+                [selectedType === "ImageElementPicker" ? "image" : "answer"]: cssPath
             };
-
-            // Merge the existing data with the new domain data
-            const updatedData = { ...existingData };
-            updatedData[window.location.hostname+"-"+selectedType] = newDomainData;
-
-            // Store the updated data back into sync storage
+            // If the domain data exists in existingData, use it, otherwise use an empty object
+            const existingDomainData = existingData[window.location.hostname] || {};
+            // Merge existingDomainData and newDomainData
+            const updatedDomainData = { ...existingDomainData, ...newDomainData };
+    
+            // Replace the domain data in existingData with updatedDomainData
+            const updatedData = { ...existingData, [window.location.hostname]: updatedDomainData };
+    
             browser.storage.sync.set({ domainData: updatedData }, function () {
-                // Print the updated data as "Saved data"
                 console.log("Saved data", updatedData);
             });
         } else {
             handleError("save error: CSS Path not found");
         }
     });
+    
+
+    // browser.storage.sync.get("domainData", async function (result) {
+    //     const existingData = result.domainData || {};
+    //     console.log("Existing data", existingData);
+
+    //     const cssPath = getCssPath(element);
+    //     if (cssPath) {
+    //         const s = await chrome.storage.local.get(null);
+    //         console.log("s.ocrID", s.ocrID);
+
+    //         const newDomainData = {
+    //             [selectedType === "ImageElementPicker" ? "image" : "answer"]: cssPath
+    //         };
+    //         const updatedData = { ...existingData };
+    //         updatedData[window.location.hostname] = newDomainData;
+
+    //         browser.storage.sync.set({ domainData: updatedData }, function () {
+    //             console.log("Saved data", updatedData);
+    //         });
+
+    //     } else {
+    //         handleError("save error: CSS Path not found");
+    //     }
+    // });
 }
 
 chrome.runtime.onMessage.addListener((request) => {

@@ -194,3 +194,28 @@ browser.runtime.onMessage.addListener((request) => {
 //   });
 
 // });
+
+
+// call for iframe refresh 
+browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'complete') {
+    browser.tabs.executeScript(tabId, { file: 'iframesRefresh.js' });
+  }
+});
+
+
+// screenshot
+browser.runtime.onMessage.addListener((request, sender) => {
+  return browser.tabs.captureVisibleTab(sender.tab.windowId, { format: "png" }).then((screenshotUrl) => {
+    let img = new Image();
+    img.onload = function() {
+      let canvas = document.createElement('canvas');
+      canvas.width = request.rect.width;
+      canvas.height = request.rect.height;
+      let ctx = canvas.getContext('2d');
+      ctx.drawImage(img, request.rect.left, request.rect.top, request.rect.width, request.rect.height, 0, 0, request.rect.width, request.rect.height);
+      return canvas.toDataURL();
+    };
+    img.src = screenshotUrl;
+  });
+});

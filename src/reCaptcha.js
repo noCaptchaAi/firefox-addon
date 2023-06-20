@@ -1,5 +1,11 @@
 (async () => {
     const settings = await chrome.storage.sync.get(null);
+    let logs = settings.logsEnabled === "true" ? true : false;
+    function log(...args) {
+        if (logs) {
+            console.log(...args);
+        }
+    }
 
     // console.log("recap image");
 
@@ -292,7 +298,7 @@
 
         previousImages = imagesJSON;
 
-        // if (settings.logs) console.log(images, target, type);
+        // log(images, target, type);
         cellsClick(images, grid, target, type);
     }
 
@@ -315,18 +321,18 @@
         while (
             settings.PLANTYPE &&
             settings.APIKEY &&
-            settings.extensionEnabled &&
-            settings.reCaptchaEnabled &&
+            settings.extensionEnabled == "true" &&
+            settings.reCaptchaEnabled == "true" &&
             settings.reCaptchaSolveType !== "audio"
         ) {
             await Time.sleep(1000);
             // console.log("reCaptcha solver started");
 
-            if (RC.isWidgetFrame() && settings.reCaptchaAutoOpen) {
+            if (RC.isWidgetFrame() && settings.reCaptchaAutoOpen == "true") {
                 RC.openImageFrame();
             }
 
-            if (RC.isImageFrame() && settings.reCaptchaAutoSolve) {
+            if (RC.isImageFrame() && settings.reCaptchaAutoSolve == "true") {
                 const type = RC.is44() ? "44" : RC.is33() ? "33" : null;
                 if (type === "33" || type === "44") {
                     await sleep(1000);
@@ -347,7 +353,7 @@
             APIKEY: settings.APIKEY,
         };
 
-        if (settings.logs)
+        if (settings.logs == "true")
             console.log(
                 "images",
                 typeof images,
@@ -364,7 +370,7 @@
                     images,
                     target,
                     type,
-                    softid: "firefoxExt_V0.1",
+                    softid: "firefoxExt_V1.0",
                     method: "recaptcha2",
                 }),
             });
@@ -383,7 +389,7 @@
 
         if (!image) return;
         const response = await req(image, target || htmlTarget, grid);
-        if (settings.logs) console.log(response);
+        log(response);
         const cells = document.querySelectorAll(".rc-image-tile-wrapper");
 
         if (!cells) return;
@@ -398,10 +404,10 @@
         }
 
         if (RC.isDynamic33() === false) {
-            if (settings.logs) console.log("dynamic", RC.isDynamic33());
+            log("dynamic", RC.isDynamic33());
             submit();
             if (RC.isErrorSelect() || RC.isErrorDynamic()) {
-                if (settings.logs) console.log("error found, skipping");
+                log("error found, skipping");
                 return RC.reload();
             }
         }
@@ -446,11 +452,12 @@
         const solution = await handleSolveQueue(response);
         if (!solution) return;
 
-        if (settings.logs) console.log(response);
+        log(response);
         if (solution.length == 0) {
+            await sleep(settings.reCaptchaSubmitDelay * 1000);
             submit();
             if (RC.isErrorSelect() || RC.isErrorDynamic()) {
-                if (settings.logs) console.log("error found, skipping");
+                log("error found, skipping");
                 return RC.reload();
             } else {
                 return;
@@ -469,7 +476,7 @@
         const htmlTarget = document.querySelector(
             ".rc-imageselect-desc-no-canonical strong"
         )?.textContent;
-        if (settings.logs) console.log(htmlTarget);
+        log(htmlTarget);
 
         const cells = document.querySelectorAll(".rc-image-tile-wrapper img");
         const image = document.querySelector(".rc-image-tile-44")?.src;
@@ -487,8 +494,9 @@
             // console.log("no solution found, reloading");
             return RC.reload();
         }
-        if (settings.logs) console.log(response);
+        log(response);
         if (solution.length == 0) {
+            await sleep(settings.reCaptchaSubmitDelay * 1000);
             return submit();
         }
         for (const index of solution) {
@@ -496,6 +504,7 @@
             fireMouseEvents(cells[index]);
         }
 
+        await sleep(settings.reCaptchaSubmitDelay * 1000);
         submit();
         await sleep(settings.reCaptchaSubmitDelay * 1000);
         return multi(target);

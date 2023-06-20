@@ -1,15 +1,22 @@
 (async () => {
   // console.log('OCR.js loaded');
   let settings = await chrome.storage.sync.get(null);
+  let logs = settings.logsEnabled === "true" ? true : false;
+  function log(arg) {
+      if (logs) {
+          console.log(arg);
+      }
+  }
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
   if (settings.domainData == undefined) {
-    console.log("domainData not found");
+    log("domainData not found");
     settings.domainData = {};
   }
 
-  const jsNotif = (m, d) => {
+  function jsNotif(m, d) {
+    if (settings.ocrToastEnabled == "false") return;
     const t = document.createElement("div");
     (t.style.cssText =
       "position:fixed;top:10%;left:0;background-color:rgba(0,0,0,.8);border-radius:4px;padding:16px;color:#fff;font:calc(14px + .5vw) 'Arial',sans-serif;font-weight:bold;text-transform:uppercase;letter-spacing:1px;z-index:9999;transition:all 1s;animation:slideIn 1s forwards"),
@@ -25,6 +32,7 @@
           document.body.removeChild(t);
         }, 1e3);
     }, d || 3e3);
+
   };
   async function isIMGANS(imgEle, ansEle) {
     return (
@@ -34,21 +42,21 @@
 
   let img;
   let ans;
+  let ocrid;
 
   try {
     const hostname = window.location.hostname;
-    const imgKey = hostname + "-ImageElementPicker";
-    const ansKey = hostname + "-AnswerElementPicker";
-
-    img = settings.domainData[imgKey]?.target;
-    ans = settings.domainData[ansKey]?.target;
-    // console.log(img, ans);
+    img = settings.domainData[hostname]?.image;
+    ans = settings.domainData[hostname]?.answer;
+    ocrid = settings.domainData[hostname]?.ocrid;
+    // log(img, ans);
   } catch (error) {
-    console.log("OCR data not found");
+    log("OCR data not found");
   }
 
   let isSolved = false;
   let breakLoop = false;
+  
 
   while (breakLoop == false) {
     await sleep(1000);
@@ -58,16 +66,16 @@
     const a = document.querySelector(ans);
 
     if (i != null && a != null && await isIMGANS(img, ans)) {
-      // console.log('domainData found');
-      console.log("image:", i, "answer", a);
-      // console.log(settings.domainData);
+      // log('domainData found');
+      log("image:", i, "answer", a);
+      // log(settings.domainData);
       await getAnswer(i.src, ans).then(
         async (solution) => {
           if (!solution) {
             breakLoop = true;
             jsNotif("solution error, check console", 2000);
           }
-          console.log(solution);
+          log(solution);
           await solveCaptcha(solution);
         }
       )
@@ -75,11 +83,19 @@
   }
 
   async function getAnswer(img, ans) {
-    // console.log('fetch');
+    // log('fetch');
     try {
-      // console.log(img, ans);
+      // log(img, ans);
       const base64Image = await toBase64Image(img);
-      console.log(await base64Image);
+      log(await base64Image);
+
+      // const mtcapPlaceholderImage = (await base64Image).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // const regexPattern = new RegExp(`^${mtcapPlaceholderImage}$`);
+
+      // if (regexPattern.test(await base64Image)) {
+      //   log("mt cap placeholder image detected");
+      //   return;
+      // }
       let req = await fetch("https://w.nocaptchaai.com/solve", {
         method: "POST",
         headers: {
@@ -88,18 +104,18 @@
         },
         body: JSON.stringify({
           method: "ocr",
-          id: settings.ocrID,
+          id: ocrid,
           image: base64Image
         })
       });
       res = await req.json();
-      console.log(res, "res");
-      jsNotif(res.solution, 2000);
+      log(res, "res");
+      jsNotif(res.solution, 4000);
       return res.solution;
 
     } catch (error) {
       jsNotif("error send task, check console");
-      console.log(error);
+      log(error);
     }
 
   }
@@ -108,17 +124,17 @@
   async function solveCaptcha(solution) {
     if (solution) {
       try {
-        console.log(ans);
+        log(ans);
         clickElement(document.querySelector(ans));
         await simulateTyping(document.querySelector(ans), solution);
 
         // document.querySelector(ans).value = res.solution;
         isSolved = true;
-        console.log("answer filled");
-        jsNotif("answer filled");
+        log("answer typed");
+        jsNotif("answer typed");
       } catch (error) {
-        jsNotif("error fill answer, check console");
-        console.log(error);
+        jsNotif("error typing answer, check console");
+        log(error);
       }
 
     }
@@ -136,7 +152,7 @@
       if (imgType !== 'jpeg' && imgType !== 'png') {
         const img = new Image();
         img.src = url;
-        console.log(img, "img");
+        log(img, "img");
         await new Promise(resolve => img.onload = resolve);
         return convertImageToBase64(img, 'image/png');
       }
@@ -170,7 +186,7 @@
         reader.onloadend = () => {
           // remove the data URL prefix
           let base64Image = reader.result.replace(dataUrlRegex, '');
-          console.log(base64Image, "base64Image");
+          log(base64Image, "base64Image");
           resolve(base64Image);
         };
         reader.onerror = () => {
@@ -198,7 +214,7 @@
 
     ctx.drawImage(img, 0, 0);
     // return the base64 string without the data URL prefix
-    console.log(canvas.toDataURL(outputFormat).replace(/^data:image\/(png|jpeg);base64,/, ''));
+    log(canvas.toDataURL(outputFormat).replace(/^data:image\/(png|jpeg);base64,/, ''));
     return canvas.toDataURL(outputFormat).replace(/^data:image\/(png|jpeg);base64,/, '');
   }
 
@@ -333,7 +349,7 @@
   //     return await toBase64Image(imgUrl);
   //   } catch (error) {
   //     jsNotif("Failed to get image from URL", 3000);
-  //     console.log('Failed to get image from URL:', error);
+  //     log('Failed to get image from URL:', error);
 
   //     // If that fails, find the first image with the specified URL and capture a screenshot of it
   //     const images = Array.from(document.getElementsByTagName('img'));
@@ -352,7 +368,7 @@
   //       return screenshotUrl.replace(/^data:image\/(png|jpeg);base64,/, '');
   //     } else {
   //       jsNotif('Failed to find image, check css selector', 3000);
-  //       console.log('Failed to find image, check css selector');
+  //       log('Failed to find image, check css selector');
   //       // throw new Error('Could not retrieve image');
   //     }
   //   }
@@ -424,7 +440,7 @@
       input.dispatchEvent(new Event("input", { bubbles: true }));
     } catch (error) {
 
-      jsNotify("could not set answer. Check your css selector");
+      jsNotif("could not set answer. Check your css selector");
     }
 
     await sleep(Math.random() * 100 + 50); // Add a random delay to simulate key release

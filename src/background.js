@@ -1,6 +1,6 @@
 chrome.runtime.onInstalled.addListener((details) => {
   // automate extension configuration, easy to deploy in batch. 
-  // visit https://config.nocaptchaai.com or https://dash.nocaptchaai.com/setup
+  // visit https://newconfig.nocaptchaai.com or https://dash.nocaptchaai.com/setup
   // paste the json {} defaultConfigs = {your export json}
 
   const defaultConfigs = {
@@ -11,6 +11,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     reCaptchaEnabled: true,
     dataDomeEnabled: true,
     ocrEnabled: true,
+    ocrToastEnabled: true,
     extensionEnabled: true,
     logsEnabled: false,
     fastAnimationMode: true,

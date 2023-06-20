@@ -242,7 +242,12 @@
 
 (async () => {
     const settings = await chrome.storage.sync.get(null);
-
+let logs = settings.logsEnabled === "true" ? true : false;
+  function log(...args) {
+      if (logs) {
+          console.log(...args);
+      }
+  }
     const isSettingInvalid =
         !settings.APIKEY ||
         !settings.extensionEnabled ||

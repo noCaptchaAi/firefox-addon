@@ -356,7 +356,7 @@ const fetchAndDisplayData = async (url, elementId, fields) => {
     if ((element && !settings.APIKEY) || settings.APIKEY.length < 1) {
         errorApiElement.style.display = "block";
         errorApiElement.style.color = "red";
-        errorApiElement.style.height = "100px";
+        errorApiElement.style.height = "120px";
         errorApiElement.style.fontSize = "20px";
         errorApiElement.style.textAlign = "center";
         errorApiElement.innerHTML = "Please enter APIKEY to start solving";
@@ -666,6 +666,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 reCaptchaEnabled: true,
                 dataDomeEnabled: true,
                 ocrEnabled: true,
+                ocrToastEnabled: true,
                 extensionEnabled: true,
                 logsEnabled: false,
                 fastAnimationMode: true,
@@ -945,11 +946,11 @@ document.getElementById('exportOCR').addEventListener('click', function download
 // import OCR JSON or merge
 document.getElementById('importButton').addEventListener('click', function() {
     let modal = document.getElementById('importModal');
-    modal.setAttribute('style', 'display: flex; flex-direction:column; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: #26003ba1; z-index: 9999; justify-content: center; align-items: center;');
+    modal.setAttribute('style', 'display: flex; flex-direction:column; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: rgba (0,0,0,.6); z-index: 9999; justify-content: center; align-items: center;');
     
     let modalContent = document.getElementById('modalContent');
     // make modal content 80 width 60 percent height
-    modalContent.setAttribute('style', 'width: 90%; height: 90%; background: #00070269; padding: 10px; border-radius: 5px;');
+    modalContent.setAttribute('style', 'width: 90%; height: 100%; background: white; padding: 10px; border-radius: 5px;');
 });
 
 
@@ -1025,4 +1026,9 @@ document.getElementById('mergeButton').addEventListener('click', function() {
             feedback.classList.remove('feedback-show');
         }, 3000);
     }
+});
+
+// ocr id list
+document.getElementById('ocrIDPicker').addEventListener('click', function() {
+    window.open("https://docs.nocaptchaai.com/en/image/ImageToText.html#ocrid");
 });

@@ -28,7 +28,8 @@
 
     if (
       location.search.startsWith("?APIKEY=") &&
-      location.href.startsWith("https://config.nocaptchaai.com")
+      location.href.startsWith("https://newconfig.nocaptchaai.com")
+
     ) {
       const get_endpoint =
         "https://manage.nocaptchaai.com/api/user/get_endpoint";

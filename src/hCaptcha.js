@@ -1,8 +1,12 @@
 const version = "1.0";
 (async () => {
-    // console.log("hCaptcha.js loaded");
     let settings = await chrome.storage.sync.get(null);
-    let blist = await chrome.storage.sync.get(null);
+    let logs = settings.logsEnabled === "true" ? true : false;
+    function log(...args) {
+        if (logs) {
+            console.log(...args);
+        }
+    }
     if (!settings.APIKEY) return;
 
     function isMulti() {
@@ -16,14 +20,14 @@ const version = "1.0";
     }
 
     (async () => {
-        if (settings.extensionEnabled === false) return;
-        if (settings.hCaptchaEnabled === false) return;
+        if (settings.extensionEnabled === "false") return;
+        if (settings.hCaptchaEnabled === "false") return;
         // utils
         const $ = (selector) => document.querySelector(selector);
         const $$ = (selector) => document.querySelectorAll(selector);
 
         // if (window.top === window) {
-        //   if(logs) console.log(
+        //   if(logs) log(
         //     "auto open= ",
         //     settings.autoOpen + "auto solve= ",
         //     settings.autoSolve + "loop running in bg"
@@ -82,7 +86,7 @@ const version = "1.0";
                     );
                 });
                 reader.addEventListener("error", function () {
-                    if (logs) console.log("❌ Failed to convert url to base64");
+                    log("❌ Failed to convert url to base64");
                 });
             });
         }
@@ -99,18 +103,18 @@ const version = "1.0";
         };
         // end essentials
 
-        const logs = settings.logsEnabled;
+        const logs = settings.logsEnabled === "true";
         // start
         while (!shouldRun()) {
             await sleep(1000);
 
             // console.log("hCaptcha.js running");
 
-            if (settings.hCaptchaAutoOpen && isWidget()) {
+            if (settings.hCaptchaAutoOpen === "true" && isWidget()) {
                 if (isSolved()) {
-                    if (logs) console.log("found solved");
-                    if (settings.debugMode) refreshIframes();
-                    if (settings.hCaptchaAlwaysSolve === false) break;
+                    log("found solved");
+                    if (settings.debugMode === "true") refreshIframes();
+                    if (settings.hCaptchaAlwaysSolve === "false") break;
                 }
 
                 // domain refferer check
@@ -118,10 +122,10 @@ const version = "1.0";
                 // await sleep(1000);
                 $("#checkbox")?.click();
             } else if (
-                settings.hCaptchaAutoSolve &&
+                settings.hCaptchaAutoSolve === "true" &&
                 $("h2.prompt-text") !== null
             ) {
-                if (settings.logsEnabled) if (logs) console.log("opening box");
+                log("opening box");
                 await sleep(1000); // important don't remove
                 await solve();
             }
@@ -168,25 +172,25 @@ const version = "1.0";
             let previousTask = [];
             // await sleep(500);
             // if (!isMulti()) {
-            if (settings.debugMode && !isBbox()) {
+            if (settings.debugMode == "true" && !isBbox()) {
                 document.querySelector(".button-submit").click();
                 return;
             }
 
             if (
-                settings.englishLanguage &&
+                settings.englishLanguage === "true" &&
                 (document.documentElement.lang || navigator.language) !== "en"
             ) {
                 await getEn();
             }
 
-            if (logs) console.log(previousTask);
+            log(previousTask);
             if (!previousTask != []) return;
 
             const { target, cells, images, example, choices } =
                 await onTaskReady();
 
-            if (!settings.hCaptchaAutoSolve) {
+            if (!settings.hCaptchaAutoSolve === "true") {
                 return;
             }
 
@@ -197,7 +201,7 @@ const version = "1.0";
 
             try {
                 previousTask = images;
-                if (logs) console.log(previousTask);
+                log(previousTask);
                 let response = await fetch(await getApi("solve"), {
                     method: "POST",
                     headers,
@@ -222,16 +226,16 @@ const version = "1.0";
                 // shuffle function for grid
                 const clicktime = randTimer(250, 350);
 
-                if (logs) console.log(ans, msg, sts, newurl, clicktime);
+                log(ans, msg, sts, newurl, clicktime);
                 let clicks = 0;
 
                 // console.table(response);
 
                 if (response.error) {
-                    if (logs) console.log(msg);
+                    log(msg);
                     jsNotif("⚠" + msg);
                 } else if (sts === "skip") {
-                    if (logs) console.log(msg);
+                    log(msg);
                     jsNotif("⚠" + " " + msg);
                 } else if (sts === "new") {
                     //  ----------- IF NEW ----------- //
@@ -277,11 +281,11 @@ const version = "1.0";
                         // const res = await (await fetch(newurl)).json();
                         // const ans = response.answer.map((x) => x.toLowerCase());
                         const ans = response.answer;
-                        if (logs) console.log("multi", ans);
+                        log("multi", ans);
                         if (msg) jsNotif("⚠" + " " + msg);
                         await clickMatchingElement(ans);
                         clicks = clicks + 1;
-                        if (logs) console.log("multi hcap ~ clicks", clicks);
+                        log("multi hcap ~ clicks", clicks);
                     } else if (isGrid()) {
                         // --------- GRID
                         const sfl = shuffle(response?.solution);
@@ -303,16 +307,16 @@ const version = "1.0";
                         }
                     }
                 } else if (sts === "falied") {
-                    if (logs) console.log(msg);
+                    log(msg);
                     jsNotif("⚠" + msg);
                 }
 
                 const ET = new Date() - startTime;
                 const RT = isMulti()
-                    ? settings.hcaptime_multi * 1000 - ET
+                    ? settings.hCaptchaMultiSolveTime * 1000 - ET
                     : isBbox()
-                    ? settings.hcaptime_bbox * 1000 - ET
-                    : settings.hcaptime * 1000 - ET;
+                        ? settings.hCaptchaBoundingBoxSolveTime * 1000 - ET
+                        : settings.hCaptchaGridSolveTime * 1000 - ET;
 
                 if (RT < 0) {
                     await sleep(300);
@@ -389,7 +393,7 @@ const version = "1.0";
                 const rect = canvas.getBoundingClientRect();
                 const x = event.clientX - rect.left;
                 const y = event.clientY - rect.top;
-                if (logs) console.log("x: " + x + " y: " + y, data);
+                log("x: " + x + " y: " + y, data);
             });
             const [x, y] = data;
             clickOnCanvas(canvas, x, y);
@@ -561,7 +565,7 @@ const version = "1.0";
                                     bg.match(/url\("(.*)"/)?.at(1)
                                 )) || "";
                         } catch (e) {
-                            if (logs) console.log(e);
+                            log(e);
                         }
                         if (!example) return;
 
@@ -569,7 +573,7 @@ const version = "1.0";
                             [Object.keys(images).length]: singleImg,
                         });
 
-                        if (logs) console.log("images", images);
+                        log("images", images);
                         const answerTextElements =
                             document.querySelectorAll(".answer-text");
                         choices = Array.from(answerTextElements).map(
@@ -579,12 +583,12 @@ const version = "1.0";
                         // if Bbox
                         const canvasImg = await sliceOG();
                         if (!canvasImg) return;
-                        if (logs) console.log("canvasImg", canvasImg);
+                        log("canvasImg", canvasImg);
                         Object.assign(images, {
                             [Object.keys(images).length]: canvasImg,
                         });
 
-                        if (logs) console.log("images", images);
+                        log("images", images);
                     }
 
                     clearInterval(check_interval);

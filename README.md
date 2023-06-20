@@ -1,7 +1,7 @@
 <h1>noCaptchaAi: CAPTCHA Solver for FireFox</h1>
 <p>Auto Config --> https://newconfig.nocaptchaai.com</p>
 <p>hCAPTCHA, reCAPTCHA v2, OCR/ImageToText Captcha</p>
-<p>Solutions with Blazing fast (hcaptcha :zap: 0.02s ) machine learned API from NoCaptchaAi.com</p>
+<p>Free Plan 🔥 6000 solves every month  -  Blazing fast AI Solutions :zap: 0.02s from NoCaptchaAi.com</p>
 <p>
 <a href="https://t.me/noCaptchaAi" target="_blank"><img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white"></a>
 <a href="https://discord.gg/E7FfzhZqzA" target="_blank"><img src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white"></a>

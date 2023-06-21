@@ -1,4 +1,4 @@
-<h1>noCaptchaAi: CAPTCHA Solver for FireFox</h1>
+<h1>noCaptchaAi: CAPTCHA Solver Firefox Addon</h1>
 <p>Auto Config --> https://newconfig.nocaptchaai.com</p>
 <p>hCAPTCHA, reCAPTCHA v2, OCR/ImageToText Captcha</p>
 <p>Free Plan 🔥 6000 solves every month  -  Blazing fast AI Solutions :zap: 0.02s from NoCaptchaAi.com</p>

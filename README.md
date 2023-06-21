@@ -1,7 +1,7 @@
-<h1>noCaptchaAi: CAPTCHA Solver Firefox Addon</h1>
+<h1>noCaptchaAi Firefox Addon : CAPTCHA SOLVER</h1>
 <p>Auto Config --> https://newconfig.nocaptchaai.com</p>
 <p>hCAPTCHA, reCAPTCHA v2, OCR/ImageToText Captcha</p>
-<p>Free Plan 🔥 6000 solves every month  -  Blazing fast AI Solutions :zap: 0.02s from NoCaptchaAi.com</p>
+<p>Free Plan 🔥 6000 solves every month - Blazing fast AI Solutions :zap: 0.02s from NoCaptchaAi.com</p>
 <p>
 <a href="https://t.me/noCaptchaAi" target="_blank"><img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white"></a>
 <a href="https://discord.gg/E7FfzhZqzA" target="_blank"><img src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white"></a>
@@ -9,6 +9,9 @@
 <a href="https://nocaptchaai.com/software"><img alt="github stars" src="https://img.shields.io/npm/v/nocaptchaai-puppeteer?label=npm-puppeteer-solver&style=for-the-badge"></a>
 <a href="https://nocaptchaai.com/software"><img alt="github stars" src="https://img.shields.io/npm/v/nocaptchasolver?label=npm-selenium-solver&style=for-the-badge"></a>
 </p>
+
+<h4>Looking for Chrome extension  - hCaptcha + reCaptchav2 --> <a href="https://github.com/noCaptchaAi/chrome-extension">Get Chrome extension</a>
+</h4>
 
 ![firefox extension screenshot](https://github.com/noCaptchaAi/firefox-addon/assets/38348819/dc2e2771-0f19-4d9d-9b53-b66bb0cae791)
 

@@ -31,8 +31,14 @@
 - EXPORT/IMPORT/MERGE OCR site data within extension
 - Custom endpoints (if elligible on plan) and so many more
 
-# Install
 
+
+### Supported:
+- Developer Edition
+- Nightly
+- ESR Release
+
+# Install
 - visit `about:config`, Read and Click on "Accept the Risk and Continue"
 - Paste on filter box `xpinstall.signatures.required` and Double click on it: false
 - Visit `about:addons` then drag and drop the `noCaptcha-firefox.xpi` on this page

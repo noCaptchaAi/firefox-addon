@@ -1,21 +1,24 @@
 {
   "manifest_version": 2,
-  "name": "noCaptchaAi Captcha Solver",
-  "version": "0.1",
+  "name": "noCaptchaAi: CAPTCHA Solver",
+  "version": "1.4",
   "background": {
-    "scripts": ["src/background.js"]
+    "scripts": [
+      "src/background.js"
+    ]
   },
   "author": "noCaptchaAi.com",
-  "description": "Captcha Solving Ai. ReCaptcha v2 Image and Audio, hCaptcha normal/Enterprise, hCaptcha Token, OCR Captcha Automated Solver",
+  "description": "reCaptcha v2, hCaptcha, OCR/ImagetoText Recognition based on NoCaptchaAi.com ",
   "permissions": [
     "tabs",
     "storage",
+    "scripting",
     "webRequest",
     "webNavigation",
     "declarativeNetRequest",
-    "scripting",
     "contextMenus",
     "activeTab",
+    "unlimitedStorage",
     "<all_urls>"
   ],
   "browser_action": {
@@ -26,6 +29,9 @@
     "default_title": "noCaptchaAi",
     "default_popup": "popup.html"
   },
+  "web_accessible_resources": [
+    "*"
+  ],
   "browser_specific_settings": {
     "gecko": {
       "id": "firefox@noCaptchaAi.com",
@@ -34,46 +40,84 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["src/elementPicker.js"],
-      "all_frames": true,
-      "match_about_blank": false
-    },
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/hCaptcha.js"],
-      "all_frames": true,
-      "match_about_blank": false
-    },
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/ocr.js"],
-      "all_frames": true,
-      "match_about_blank": false
-    },
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/iframes.js"],
-      "all_frames": true,
-      "match_about_blank": false
-    },
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/recaptcha_audio.js"],
-      "all_frames": true,
-      "match_about_blank": false
-    },
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/reCaptcha.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/elementPicker.js"
+      ],
       "all_frames": true,
       "match_about_blank": false
     },
     {
       "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/hCaptcha.js"
+      ],
+      "all_frames": true,
+      "match_about_blank": false
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/bls.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_end",
+      "match_about_blank": false
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/ocr.js"
+      ],
+      "all_frames": true,
+      "match_about_blank": false
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/iframes.js"
+      ],
+      "all_frames": true,
+      "match_about_blank": false
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/recaptcha_audio.js"
+      ],
+      "all_frames": true,
+      "match_about_blank": false
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/recaptcha.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    },
+    {
+      "matches": [
         "https://newconfig.nocaptchaai.com/?APIKEY=*"
       ],
-      "js": ["src/config.js"]
+      "js": [
+        "src/config.js"
+      ]
     }
   ],
   "icons": {

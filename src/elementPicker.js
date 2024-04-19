@@ -1,13 +1,11 @@
 (async () => {
-
-
     let selectedType = null;
     let highlightedElement = null;
     let metadataElement = null;
     let cssPathElement = null;
     let stickyElement = null;
 
-    let settings = await chrome.storage.sync.get(null);
+    let settings = await browser.storage.sync.get(null);
     let logs = settings.logsEnabled === "true" ? true : false;
     function log(...args) {
         if (logs) {
@@ -205,10 +203,16 @@
         logoName.style.color = "#000";
         stickyElement.appendChild(logoName);
 
+        const esc = document.createElement("div");
+        esc.innerHTML = "<b>Press ESC to exit the element picker</b>";
+        esc.style.color = "#000";
+        stickyElement.appendChild(esc);
+
         const nameElement = document.createElement("div");
         nameElement.style.marginTop = "2px";
         nameElement.style.color = "#000";
-        nameElement.textContent = type;
+        nameElement.style.fontSize = "15px";
+        nameElement.textContent = type === "ImageElementPicker" ? "🖼️ Image Element Picker" : " 🅣🅔🅧🅣 Answer Element Picker";
         stickyElement.appendChild(nameElement);
 
         cssPathElement = document.createElement("div");
@@ -255,7 +259,7 @@
 
             const cssPath = getCssPath(element);
             if (cssPath) {
-                const s = await chrome.storage.local.get(null);
+                const s = await browser.storage.local.get(null);
                 log("s.ocrID", s.ocrID);
 
                 const newDomainData = {
@@ -284,7 +288,7 @@
 
         //     const cssPath = getCssPath(element);
         //     if (cssPath) {
-        //         const s = await chrome.storage.local.get(null);
+        //         const s = await browser.storage.local.get(null);
         //         log("s.ocrID", s.ocrID);
 
         //         const newDomainData = {
@@ -303,7 +307,7 @@
         // });
     }
 
-    chrome.runtime.onMessage.addListener((request) => {
+    browser.runtime.onMessage.addListener((request) => {
         if (
             request.command === "ImageElementPicker" ||
             request.command === "AnswerElementPicker"

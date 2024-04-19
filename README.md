@@ -46,9 +46,9 @@
 - Firefox Developer Edition [download](https://www.mozilla.org/en-US/firefox/developer/)
 
 # Install
-
-- Visit `chrome://extensions/`,
-- Enable `Developer mode [ ]` if not already
-- Click `│ │ Load unpacked │ │` and Select folder OR Drag n drop `chrome` folder on this page, DONE!
-- Visit dash for APIKEY and Use [newconfig](https://newconfig.nocaptchaai.com) to automate your desired config
-
+- visit `about:config`, Read and Click on "Accept the Risk and Continue"
+- Paste on filter box `xpinstall.signatures.required` and Double click on it: false
+- Visit `about:addons` then drag and drop the `noCaptcha-firefox.xpi` on this page
+- Click `add`. It's done.
+- Visit dash for APIKEY and then paste it on extension. OR use [newconfig](https://newconfig.nocaptchaai.com)  to automate
+  

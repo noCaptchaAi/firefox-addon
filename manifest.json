@@ -44,7 +44,7 @@
         "<all_urls>"
       ],
       "js": [
-        "src/elementPicker.js"
+        "src/element_picker.js"
       ],
       "all_frames": true,
       "match_about_blank": false
@@ -54,7 +54,7 @@
         "<all_urls>"
       ],
       "js": [
-        "src/hCaptcha.js"
+        "src/hcaptcha.js"
       ],
       "all_frames": true,
       "match_about_blank": false
@@ -86,6 +86,16 @@
       ],
       "js": [
         "src/iframes.js"
+      ],
+      "all_frames": true,
+      "match_about_blank": false
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/iframes_refresh.js"
       ],
       "all_frames": true,
       "match_about_blank": false

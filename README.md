@@ -23,7 +23,7 @@
 <a href="https://nocaptchaai.com/software"><img alt="github stars" src="https://img.shields.io/npm/v/nocaptchasolver?label=npm-selenium-solver&style=for-the-badge"></a>
 </p>
 
-<img src="screenshot.png" style="width:30%"  alt="noCaptchaAi CAPTCHA Solver for Firefox screenshot ">
+<img src="screenshot.png" style="width:50%"  alt="noCaptchaAi CAPTCHA Solver for Firefox screenshot ">
 
 ## Features
 

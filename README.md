@@ -6,7 +6,7 @@
 - BLS OCR Captcha
 - more
 
-### 👉 [Download Latest for Firefox](https://github.com/noCaptchaAi/chrome/releases/latest)
+### 👉 [Download Latest for Firefox](https://github.com/noCaptchaAi/firefox-addon/releases/latest)
 
 ### 👉 AUTO URL configurator ~ [newconfig.nocaptchaai.com](https://newconfig.nocaptchaai.com)
 

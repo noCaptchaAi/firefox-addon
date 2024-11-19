@@ -1,6 +1,6 @@
 # noCaptchaAi: CAPTCHA Solver for Firefox
 
-- hCAPTCHA
+- qCAPTCHA
 - reCAPTCHA v2
 - OCR/ImageToText
 - BLS OCR Captcha
@@ -28,7 +28,7 @@
 ## Features
 
 - Uses Blazing fast (hcaptcha :zap: 0.02s ) machine learned API from NoCaptchaAi.com
-- hCAPTCHA (Grid, multi select and Bounding Box Challenges - Means most)
+- qCAPTCHA (Grid, multi select and Bounding Box Challenges - Means most)
 - reCAPTCHA v2 Image (free while beta)
 - reCAPTCHA v2 Audio
 - OCR or Image to Task Captcha [all supported list here](https://docs.nocaptchaai.com/en/image/ImageToText.html)
